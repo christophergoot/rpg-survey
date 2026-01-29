@@ -5,9 +5,9 @@
 -- INSERT SURVEY QUESTIONS
 -- ==============================================
 
--- Question 1: Theme
+-- Question 1: Theme (multi-choice to allow selecting multiple themes)
 INSERT INTO survey_questions (question_key, question_type, order_index, is_required, config) VALUES
-('theme', 'single_choice', 1, true, '{"options": ["scifi", "fantasy", "horror", "modern", "historical", "cyberpunk", "postapoc"]}'::jsonb);
+('theme', 'multi_choice', 1, true, '{"options": ["scifi", "fantasy", "horror", "modern", "historical", "cyberpunk", "postapoc"]}'::jsonb);
 
 -- Question 2: Setting Details
 INSERT INTO survey_questions (question_key, question_type, order_index, is_required, config) VALUES
