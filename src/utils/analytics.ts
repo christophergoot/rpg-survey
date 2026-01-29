@@ -47,9 +47,11 @@ export const calculateSummary = (responses: SurveyResponse[]): SurveySummary => 
   responses.forEach((response) => {
     const answers = response.answers as SurveyAnswers
 
-    // Count themes
-    if (answers.theme) {
-      summary.themeCounts[answers.theme] = (summary.themeCounts[answers.theme] || 0) + 1
+    // Count themes (multi-select)
+    if (answers.theme && Array.isArray(answers.theme)) {
+      answers.theme.forEach((theme) => {
+        summary.themeCounts[theme] = (summary.themeCounts[theme] || 0) + 1
+      })
     }
 
     // Sum rules complexity

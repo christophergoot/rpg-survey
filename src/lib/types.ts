@@ -225,7 +225,7 @@ export interface GMProfile {
 
 // Survey Answer Types
 export interface SurveyAnswers {
-  theme?: string
+  theme?: string[]
   setting_details?: string
   activity_preferences?: {
     combat: number
