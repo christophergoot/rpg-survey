@@ -84,7 +84,7 @@ export const useCreateSurvey = () => {
 
       const { data, error } = await supabase
         .from('surveys')
-        .insert({
+        .insert([{
           created_by: user.id,
           title: surveyData.title,
           description: surveyData.description || null,
@@ -92,7 +92,7 @@ export const useCreateSurvey = () => {
           share_token: shareToken,
           is_active: true,
           settings: {}
-        })
+        }])
         .select()
         .single()
 
@@ -117,7 +117,12 @@ export const useUpdateSurvey = () => {
       updates
     }: {
       surveyId: string
-      updates: Partial<Survey>
+      updates: {
+        title?: string
+        description?: string | null
+        is_active?: boolean
+        supported_languages?: string[]
+      }
     }) => {
       const { data, error } = await supabase
         .from('surveys')

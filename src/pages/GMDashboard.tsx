@@ -11,7 +11,7 @@ export const GMDashboard: React.FC = () => {
   const deleteSurvey = useDeleteSurvey()
   const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const handleDelete = async (surveyId: string, surveyTitle: string) => {
+  const handleDelete = async (surveyId: string) => {
     if (!window.confirm(t('dashboard.confirmDelete'))) {
       return
     }
@@ -139,7 +139,7 @@ export const GMDashboard: React.FC = () => {
                     📋 {t('dashboard.shareSurvey')}
                   </button>
                   <button
-                    onClick={() => handleDelete(survey.id, survey.title)}
+                    onClick={() => handleDelete(survey.id)}
                     disabled={deletingId === survey.id}
                     className="w-full px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded transition-colors disabled:opacity-50"
                   >
