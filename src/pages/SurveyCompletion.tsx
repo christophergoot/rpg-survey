@@ -7,6 +7,7 @@ import { useSubmitResponse } from '../hooks/useResponses'
 import { LanguageSelector } from '../components/common/LanguageSelector'
 import { SurveyProgress } from '../components/survey/SurveyProgress'
 import { QuestionRenderer } from '../components/survey/QuestionRenderer'
+import { LanguageProficiencyQuestion } from '../components/survey/LanguageProficiencyQuestion'
 import { useLanguageStore } from '../stores/languageStore'
 import type { SurveyAnswers } from '../lib/types'
 
@@ -25,8 +26,16 @@ export const SurveyCompletion: React.FC = () => {
   const [showValidation, setShowValidation] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
-  const currentQuestion = questions[currentQuestionIndex]
-  const totalQuestions = questions.length
+  // Check if we need a language proficiency question
+  const needsLanguageProficiency = survey && survey.supported_languages.length > 1
+  const languageProficiencyIndex = 0
+
+  // Adjust question indices if language proficiency is needed
+  const adjustedQuestionIndex = needsLanguageProficiency
+    ? currentQuestionIndex - 1
+    : currentQuestionIndex
+  const currentQuestion = questions[adjustedQuestionIndex]
+  const totalQuestions = questions.length + (needsLanguageProficiency ? 1 : 0)
 
   // Sync language with i18n
   useEffect(() => {
@@ -35,6 +44,13 @@ export const SurveyCompletion: React.FC = () => {
 
   // Check if current question is answered
   const isCurrentQuestionAnswered = () => {
+    // Special case: language proficiency question
+    if (needsLanguageProficiency && currentQuestionIndex === languageProficiencyIndex) {
+      const langProf = answers.language_proficiency
+      if (!langProf || !survey) return false
+      return survey.supported_languages.every(lang => langProf[lang] !== undefined)
+    }
+
     if (!currentQuestion) return false
 
     const answer = answers[currentQuestion.question_key as keyof SurveyAnswers]
@@ -80,10 +96,18 @@ export const SurveyCompletion: React.FC = () => {
   }
 
   const handleAnswerChange = (value: any) => {
-    setAnswers({
-      ...answers,
-      [currentQuestion.question_key]: value
-    })
+    // Special handling for language proficiency
+    if (needsLanguageProficiency && currentQuestionIndex === languageProficiencyIndex) {
+      setAnswers({
+        ...answers,
+        language_proficiency: value
+      })
+    } else {
+      setAnswers({
+        ...answers,
+        [currentQuestion.question_key]: value
+      })
+    }
     setShowValidation(false)
   }
 
@@ -218,7 +242,14 @@ export const SurveyCompletion: React.FC = () => {
 
           {/* Question */}
           <div className="p-8 bg-dark-surface rounded-lg border border-dark-elevated mb-6">
-            {currentQuestion && (
+            {needsLanguageProficiency && currentQuestionIndex === languageProficiencyIndex ? (
+              <LanguageProficiencyQuestion
+                languages={survey.supported_languages}
+                value={answers.language_proficiency}
+                onChange={handleAnswerChange}
+                showValidation={showValidation}
+              />
+            ) : currentQuestion ? (
               <QuestionRenderer
                 question={currentQuestion}
                 translation={currentQuestion.translation}
@@ -226,7 +257,7 @@ export const SurveyCompletion: React.FC = () => {
                 onChange={handleAnswerChange}
                 showValidation={showValidation}
               />
-            )}
+            ) : null}
           </div>
 
           {/* Navigation */}

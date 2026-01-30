@@ -19,7 +19,12 @@ i18n
       escapeValue: false // React already escapes values
     },
     detection: {
-      order: ['localStorage', 'navigator'],
+      // Detection order:
+      // 1. querystring (?lng=es) - useful for sharing surveys in specific language
+      // 2. localStorage - returning users' preference
+      // 3. navigator - browser/OS language setting
+      order: ['querystring', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lng',
       caches: ['localStorage']
     }
   })

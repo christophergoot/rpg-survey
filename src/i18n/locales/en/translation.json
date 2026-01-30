@@ -103,6 +103,18 @@
       "required": "This question is required",
       "surveyNotFound": "Survey not found",
       "surveyInactive": "This survey is no longer active"
+    },
+    "languageProficiency": {
+      "title": "Language Proficiency",
+      "description": "Rate your proficiency in each language for this campaign",
+      "level1": "Beginner - Basic words and phrases",
+      "level2": "Elementary - Simple conversations",
+      "level3": "Intermediate - Comfortable in most situations",
+      "level4": "Advanced - Fluent in complex topics",
+      "level5": "Native/Proficient - Complete mastery"
+    },
+    "validation": {
+      "pleaseAnswerAll": "Please rate your proficiency in all languages"
     }
   },
   "results": {

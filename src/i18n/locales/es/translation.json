@@ -103,6 +103,18 @@
       "required": "Esta pregunta es obligatoria",
       "surveyNotFound": "Encuesta no encontrada",
       "surveyInactive": "Esta encuesta ya no está activa"
+    },
+    "languageProficiency": {
+      "title": "Competencia Lingüística",
+      "description": "Califica tu competencia en cada idioma para esta campaña",
+      "level1": "Principiante - Palabras y frases básicas",
+      "level2": "Elemental - Conversaciones simples",
+      "level3": "Intermedio - Cómodo en la mayoría de situaciones",
+      "level4": "Avanzado - Fluido en temas complejos",
+      "level5": "Nativo/Competente - Dominio completo"
+    },
+    "validation": {
+      "pleaseAnswerAll": "Por favor califica tu competencia en todos los idiomas"
     }
   },
   "results": {

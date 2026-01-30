@@ -225,6 +225,7 @@ export interface GMProfile {
 
 // Survey Answer Types
 export interface SurveyAnswers {
+  language_proficiency?: Record<string, number> // e.g., { "en": 5, "es": 3 }
   theme?: string[]
   setting_details?: string
   activity_preferences?: {
