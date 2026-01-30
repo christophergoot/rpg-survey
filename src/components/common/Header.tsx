@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../../hooks/useAuth'
 import { LanguageSelector } from './LanguageSelector'
+import { D20Icon } from './D20Icon'
 
 export const Header: React.FC = () => {
   const { t } = useTranslation()
@@ -19,8 +20,8 @@ export const Header: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <Link to="/" className="flex items-center gap-2 text-xl font-bold text-white hover:text-cyber-400 transition-colors">
-            <span className="text-2xl">🎲</span>
+          <Link to="/" className="flex items-center gap-2 text-xl font-bold text-white hover:text-cyber-400 transition-colors group">
+            <D20Icon size={32} className="group-hover:scale-110 transition-transform" />
             <span className="hidden sm:inline">{t('common.appName')}</span>
           </Link>
 

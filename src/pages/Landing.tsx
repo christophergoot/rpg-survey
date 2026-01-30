@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LanguageSelector } from '../components/common/LanguageSelector'
+import { D20Icon } from '../components/common/D20Icon'
 
 export const Landing: React.FC = () => {
   const { t } = useTranslation()
@@ -12,8 +13,8 @@ export const Landing: React.FC = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="max-w-4xl mx-auto text-center">
           {/* Logo/Icon */}
-          <div className="mb-8">
-            <span className="text-8xl">🎲</span>
+          <div className="mb-8 flex justify-center">
+            <D20Icon size={128} className="drop-shadow-2xl animate-pulse" />
           </div>
 
           {/* Title */}

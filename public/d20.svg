@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="d20gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066ff;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- D20 outline -->
+  <path d="M50 5 L85 30 L85 70 L50 95 L15 70 L15 30 Z"
+        fill="url(#d20gradient)"
+        stroke="#003366"
+        stroke-width="2"/>
+
+  <!-- Inner facets for 3D effect -->
+  <path d="M50 5 L50 50 L85 30 Z" fill="rgba(255,255,255,0.1)" stroke="#003366" stroke-width="1"/>
+  <path d="M50 5 L50 50 L15 30 Z" fill="rgba(255,255,255,0.15)" stroke="#003366" stroke-width="1"/>
+  <path d="M50 95 L50 50 L85 70 Z" fill="rgba(0,0,0,0.2)" stroke="#003366" stroke-width="1"/>
+  <path d="M50 95 L50 50 L15 70 Z" fill="rgba(0,0,0,0.15)" stroke="#003366" stroke-width="1"/>
+  <path d="M15 30 L50 50 L15 70 Z" fill="rgba(255,255,255,0.05)" stroke="#003366" stroke-width="1"/>
+  <path d="M85 30 L50 50 L85 70 Z" fill="rgba(0,0,0,0.1)" stroke="#003366" stroke-width="1"/>
+
+  <!-- Number 20 -->
+  <text x="50" y="58"
+        font-family="Arial, sans-serif"
+        font-size="24"
+        font-weight="bold"
+        fill="white"
+        text-anchor="middle"
+        stroke="#003366"
+        stroke-width="0.5">20</text>
+</svg>
