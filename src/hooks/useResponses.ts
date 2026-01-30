@@ -36,7 +36,7 @@ export const useSubmitResponse = () => {
       answers
     }: {
       surveyId: string
-      playerName?: string
+      playerName: string  // Now required
       language: string
       answers: SurveyAnswers
     }) => {
@@ -48,7 +48,7 @@ export const useSubmitResponse = () => {
         .insert([
           {
             survey_id: surveyId,
-            player_name: playerName || null,
+            player_name: playerName,
             language,
             answers,
             user_agent: userAgent,
@@ -60,6 +60,69 @@ export const useSubmitResponse = () => {
 
       if (error) throw error
       return data as SurveyResponse
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['survey-responses', variables.surveyId]
+      })
+    }
+  })
+}
+
+/**
+ * Update player name for a response (GM only)
+ */
+export const useUpdatePlayerName = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      responseId,
+      playerName,
+      surveyId
+    }: {
+      responseId: string
+      playerName: string
+      surveyId: string
+    }) => {
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .update({ player_name: playerName })
+        .eq('id', responseId)
+        .select()
+        .single()
+
+      if (error) throw error
+      return data as SurveyResponse
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ['survey-responses', variables.surveyId]
+      })
+    }
+  })
+}
+
+/**
+ * Delete a survey response (GM only)
+ */
+export const useDeleteResponse = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      responseId,
+      surveyId
+    }: {
+      responseId: string
+      surveyId: string
+    }) => {
+      const { error } = await supabase
+        .from('survey_responses')
+        .delete()
+        .eq('id', responseId)
+
+      if (error) throw error
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({

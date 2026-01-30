@@ -175,7 +175,7 @@ export const ResultsDashboard: React.FC = () => {
             )}
           </div>
         ) : (
-          <ResponseList responses={responses} />
+          <ResponseList responses={responses} surveyId={surveyId!} />
         )}
       </div>
     </div>

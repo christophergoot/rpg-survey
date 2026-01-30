@@ -9,6 +9,7 @@ interface LanguageProficiencyQuestionProps {
 }
 
 const PROFICIENCY_LEVELS = [
+  { value: 0, labelKey: 'survey.languageProficiency.level0' },
   { value: 1, labelKey: 'survey.languageProficiency.level1' },
   { value: 2, labelKey: 'survey.languageProficiency.level2' },
   { value: 3, labelKey: 'survey.languageProficiency.level3' },

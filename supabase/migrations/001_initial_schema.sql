@@ -124,8 +124,9 @@ CREATE POLICY "Anyone can read question translations"
 GRANT SELECT ON surveys TO anon, authenticated;
 GRANT INSERT, UPDATE, DELETE ON surveys TO authenticated;
 
--- Survey Responses: everyone can insert, authenticated can read
-GRANT SELECT, INSERT ON survey_responses TO anon, authenticated;
+-- Survey Responses: anon can insert, authenticated can do everything
+GRANT INSERT ON survey_responses TO anon;
+GRANT SELECT, INSERT, UPDATE, DELETE ON survey_responses TO authenticated;
 
 -- ==============================================
 -- FUNCTIONS & TRIGGERS

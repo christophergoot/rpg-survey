@@ -112,6 +112,12 @@ export const SurveyCompletion: React.FC = () => {
   }
 
   const handleSubmit = async () => {
+    // Check if player name is provided
+    if (!playerName.trim()) {
+      alert(t('survey.complete.nameRequired'))
+      return
+    }
+
     if (!isCurrentQuestionAnswered()) {
       setShowValidation(true)
       return
@@ -122,7 +128,7 @@ export const SurveyCompletion: React.FC = () => {
     try {
       await submitResponse.mutateAsync({
         surveyId: survey.id,
-        playerName: playerName.trim() || undefined,
+        playerName: playerName.trim(),
         language,
         answers
       })
@@ -222,17 +228,18 @@ export const SurveyCompletion: React.FC = () => {
           {currentQuestionIndex === 0 && (
             <div className="mb-8 p-6 bg-dark-surface rounded-lg border border-dark-elevated">
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                {t('survey.complete.playerName')}
+                {t('survey.complete.playerName')} <span className="text-red-400">*</span>
               </label>
               <input
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder={t('survey.complete.playerNamePlaceholder')}
+                required
                 className="w-full px-4 py-3 bg-dark-bg border-2 border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
               />
               <p className="mt-2 text-sm text-gray-500">
-                Optional - helps the GM identify your response
+                {t('survey.complete.nameRequiredHelp')}
               </p>
             </div>
           )}

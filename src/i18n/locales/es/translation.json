@@ -93,8 +93,10 @@
     "complete": {
       "title": "Encuesta de Jugador",
       "welcomeMessage": "Ayuda a tu DJ a crear la campaña perfecta",
-      "playerName": "Tu Nombre (opcional)",
+      "playerName": "Tu Nombre",
       "playerNamePlaceholder": "Ingresa tu nombre",
+      "nameRequired": "Por favor ingresa tu nombre antes de enviar",
+      "nameRequiredHelp": "Obligatorio - ayuda al DJ a identificar tu respuesta",
       "progress": "Pregunta {{current}} de {{total}}",
       "submitting": "Enviando...",
       "submitted": "¡Gracias por completar la encuesta!",
@@ -107,6 +109,7 @@
     "languageProficiency": {
       "title": "Competencia Lingüística",
       "description": "Califica tu competencia en cada idioma para esta campaña",
+      "level0": "Sin Conocimiento - No hablo este idioma",
       "level1": "Principiante - Palabras y frases básicas",
       "level2": "Elemental - Conversaciones simples",
       "level3": "Intermedio - Cómodo en la mayoría de situaciones",

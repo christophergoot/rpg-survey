@@ -93,8 +93,10 @@
     "complete": {
       "title": "Player Survey",
       "welcomeMessage": "Help your GM create the perfect campaign",
-      "playerName": "Your Name (optional)",
+      "playerName": "Your Name",
       "playerNamePlaceholder": "Enter your name",
+      "nameRequired": "Please enter your name before submitting",
+      "nameRequiredHelp": "Required - helps the GM identify your response",
       "progress": "Question {{current}} of {{total}}",
       "submitting": "Submitting...",
       "submitted": "Thank you for completing the survey!",
@@ -107,6 +109,7 @@
     "languageProficiency": {
       "title": "Language Proficiency",
       "description": "Rate your proficiency in each language for this campaign",
+      "level0": "No Knowledge - I don't speak this language",
       "level1": "Beginner - Basic words and phrases",
       "level2": "Elementary - Simple conversations",
       "level3": "Intermediate - Comfortable in most situations",
