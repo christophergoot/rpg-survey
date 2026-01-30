@@ -78,8 +78,7 @@ export const useUpdatePlayerName = () => {
   return useMutation({
     mutationFn: async ({
       responseId,
-      playerName,
-      surveyId
+      playerName
     }: {
       responseId: string
       playerName: string
@@ -111,8 +110,7 @@ export const useDeleteResponse = () => {
 
   return useMutation({
     mutationFn: async ({
-      responseId,
-      surveyId
+      responseId
     }: {
       responseId: string
       surveyId: string
