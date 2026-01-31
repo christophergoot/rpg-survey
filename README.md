@@ -11,15 +11,18 @@ A bilingual web application that helps Game Masters gather player preferences fo
 - 🔗 **Easy Sharing** - Generate unique shareable links for each survey
 - 📊 **Beautiful Analytics** - View response data with interactive Chart.js visualizations
 - 👥 **Individual Responses** - See detailed responses from each player
+- ✏️ **Manage Responses** - Rename players or delete responses as needed
 - 💾 **CSV Export** - Export all responses to CSV for further analysis
+- 📧 **Email Notifications** - Get notified when players submit responses (optional)
 - 🔒 **Protected Dashboard** - Secure authentication for GM-only features
 
 ### For Players
 - 🌐 **Bilingual Support** - Complete surveys in English (US) or Spanish (Spain)
+- 🌍 **Auto Language Detection** - Automatically detects browser/OS language preference
 - 📱 **Mobile Friendly** - Responsive design works on all devices
 - 🎯 **Progress Tracking** - Visual progress bar shows completion status
 - ✅ **Smart Validation** - Real-time feedback on required questions
-- 🚀 **Anonymous Option** - Complete surveys with or without providing a name
+- 🗣️ **Language Proficiency** - Rate proficiency in each campaign language (for multilingual campaigns)
 
 ### Survey Questions
 The survey includes 12 comprehensive questions covering:
@@ -97,7 +100,6 @@ Follow the detailed instructions in [SETUP.md](SETUP.md), but here's the quick v
 2. Run the SQL migrations in order:
    - `supabase/migrations/001_initial_schema.sql`
    - `supabase/migrations/002_seed_questions.sql`
-   - `supabase/migrations/003_update_theme_to_multi_choice.sql`
 3. Get your project URL and anon key from Settings → API
 
 ### 4. Configure Environment Variables
@@ -148,6 +150,56 @@ The workflow (`.github/workflows/deploy.yml`) will automatically:
 - Deploy to GitHub Pages
 - Make it available at `https://yourusername.github.io/rpg-survey`
 
+## 📧 Email Notifications (Optional)
+
+GMs can receive email notifications when players submit survey responses. This feature uses Supabase Edge Functions and Resend.
+
+### Prerequisites
+
+- Supabase CLI installed
+- Resend account (free tier: 100 emails/day)
+
+### 1. Install Supabase CLI
+
+```bash
+# macOS
+brew install supabase/tap/supabase
+
+# Windows (scoop)
+scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+scoop install supabase
+
+# npm (all platforms)
+npm install -g supabase
+```
+
+### 2. Get Resend API Key
+
+1. Go to [resend.com](https://resend.com) and create a free account
+2. Navigate to API Keys and create a new key
+3. Copy the key (starts with `re_`)
+
+### 3. Deploy the Edge Function
+
+```bash
+# Login to Supabase CLI (opens browser)
+supabase login
+
+# Link to your project (get project ref from Supabase dashboard URL)
+# e.g., if your URL is https://abcd1234.supabase.co, the ref is "abcd1234"
+supabase link --project-ref YOUR_PROJECT_REF
+
+# Set the Resend API key as a secret
+supabase secrets set RESEND_API_KEY=re_your_key_here
+
+# Deploy the edge function
+supabase functions deploy notify-gm
+```
+
+### 4. Done!
+
+The app will automatically send email notifications when players submit surveys. If the email service is unavailable, survey submissions still work normally (fire-and-forget pattern).
+
 ### Updating the Base Path
 
 If your repository name is different from `rpg-survey`, update the base path in `vite.config.ts`:
@@ -185,14 +237,17 @@ rpg-survey/
 │   └── workflows/
 │       └── deploy.yml           # GitHub Actions deployment
 ├── supabase/
+│   ├── functions/               # Edge Functions
+│   │   └── notify-gm/           # Email notification function
+│   │       └── index.ts
 │   └── migrations/              # Database schema and seeds
 │       ├── 001_initial_schema.sql
-│       ├── 002_seed_questions.sql
-│       └── 003_update_theme_to_multi_choice.sql
+│       └── 002_seed_questions.sql
 ├── src/
 │   ├── components/
 │   │   ├── common/              # Shared components
 │   │   │   ├── Header.tsx
+│   │   │   ├── D20Icon.tsx
 │   │   │   ├── LanguageSelector.tsx
 │   │   │   └── ProtectedRoute.tsx
 │   │   ├── results/             # Results dashboard components
@@ -208,6 +263,7 @@ rpg-survey/
 │   │       ├── ScaleQuestion.tsx
 │   │       ├── MultiScaleQuestion.tsx
 │   │       ├── TextQuestion.tsx
+│   │       ├── LanguageProficiencyQuestion.tsx
 │   │       └── SurveyProgress.tsx
 │   ├── hooks/                   # React hooks
 │   │   ├── useAuth.ts
@@ -270,13 +326,12 @@ All UI text and survey questions are fully translated. Language selection is:
 Potential features for future development:
 - Survey templates for quick creation
 - Custom questions (GM-defined)
-- Email notifications for new responses
 - Survey expiration dates
 - Advanced analytics (correlations, recommendations)
 - Additional languages (French, German, Portuguese)
 - Dark/light mode toggle
 - PDF export of results
-- Response editing capability
+- QR code generation for easy mobile sharing
 
 ## 🐛 Troubleshooting
 

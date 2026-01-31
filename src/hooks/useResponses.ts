@@ -23,6 +23,20 @@ export const useSurveyResponses = (surveyId: string) => {
 }
 
 /**
+ * Notify GM via Edge Function (fire-and-forget)
+ */
+const notifyGM = async (surveyId: string, playerName: string, responseId: string) => {
+  try {
+    await supabase.functions.invoke('notify-gm', {
+      body: { surveyId, playerName, responseId }
+    })
+  } catch (error) {
+    // Silently fail - don't block user experience if email fails
+    console.error('Failed to notify GM:', error)
+  }
+}
+
+/**
  * Submit a survey response (anonymous)
  */
 export const useSubmitResponse = () => {
@@ -61,10 +75,13 @@ export const useSubmitResponse = () => {
       if (error) throw error
       return data as SurveyResponse
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (response, variables) => {
       queryClient.invalidateQueries({
         queryKey: ['survey-responses', variables.surveyId]
       })
+
+      // Send email notification to GM (fire-and-forget)
+      notifyGM(variables.surveyId, variables.playerName, response.id)
     }
   })
 }
