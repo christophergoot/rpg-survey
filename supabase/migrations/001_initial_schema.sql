@@ -117,7 +117,7 @@ CREATE POLICY "Anyone can read question translations"
   USING (TRUE);
 
 -- ==============================================
--- GRANTS FOR SURVEYS AND RESPONSES (No RLS)
+-- GRANTS (No RLS on surveys and survey_responses)
 -- ==============================================
 
 -- Surveys: authenticated users can do everything, anon can read
@@ -127,6 +127,18 @@ GRANT INSERT, UPDATE, DELETE ON surveys TO authenticated;
 -- Survey Responses: anon can insert, authenticated can do everything
 GRANT INSERT ON survey_responses TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON survey_responses TO authenticated;
+
+-- Survey Questions: everyone can read
+GRANT SELECT ON survey_questions TO anon, authenticated;
+
+-- Question Translations: everyone can read
+GRANT SELECT ON question_translations TO anon, authenticated;
+
+-- GM Profiles: authenticated can read/write their own
+GRANT SELECT, INSERT, UPDATE ON gm_profiles TO authenticated;
+
+-- Sequences: needed for auto-increment IDs
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
 
 -- ==============================================
 -- FUNCTIONS & TRIGGERS
