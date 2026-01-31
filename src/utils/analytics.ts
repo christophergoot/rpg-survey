@@ -1,4 +1,14 @@
-import type { SurveyResponse, SurveySummary, SurveyAnswers } from '../lib/types'
+import type {
+  SurveyResponse,
+  SurveySummary,
+  SurveyAnswers,
+  GroupInsights,
+  ConsensusItem,
+  ConflictItem,
+  Correlation,
+  GameSystemRecommendation,
+  SessionZeroTopic
+} from '../lib/types'
 
 /**
  * Calculate summary statistics from survey responses
@@ -189,4 +199,706 @@ export const downloadCSV = (csv: string, filename: string): void => {
   document.body.removeChild(link)
 
   URL.revokeObjectURL(url)
+}
+
+// ============================================
+// Advanced Analytics - Group Insights
+// ============================================
+
+const FIELD_LABELS: Record<string, string> = {
+  theme: 'Theme',
+  combat_style: 'Combat Style',
+  campaign_length: 'Campaign Length',
+  session_frequency: 'Session Frequency',
+  character_creation: 'Character Creation',
+  rules_complexity: 'Rules Complexity',
+  experience_level: 'Experience Level',
+  tone_preferences: 'Tone Preferences',
+  content_boundaries: 'Content Boundaries'
+}
+
+const VALUE_LABELS: Record<string, Record<string, string>> = {
+  theme: {
+    scifi: 'Sci-Fi',
+    fantasy: 'Fantasy',
+    horror: 'Horror',
+    modern: 'Modern',
+    historical: 'Historical',
+    cyberpunk: 'Cyberpunk',
+    postapoc: 'Post-Apocalyptic'
+  },
+  combat_style: {
+    narrative: 'Narrative/Abstract',
+    tactical: 'Tactical/Grid-based',
+    hybrid: 'Hybrid'
+  },
+  campaign_length: {
+    oneshot: 'One-Shot',
+    short: 'Short Arc (2-5 sessions)',
+    medium: 'Medium Campaign (6-20 sessions)',
+    longterm: 'Long-Term (20+ sessions)'
+  },
+  session_frequency: {
+    weekly: 'Weekly',
+    biweekly: 'Bi-weekly',
+    monthly: 'Monthly',
+    flexible: 'Flexible'
+  },
+  character_creation: {
+    pregen: 'Pre-generated Characters',
+    collaborative: 'Collaborative Creation',
+    full_control: 'Full Player Control'
+  },
+  tone_preferences: {
+    serious: 'Serious',
+    lighthearted: 'Lighthearted',
+    heroic: 'Heroic',
+    gritty: 'Gritty',
+    mysterious: 'Mysterious'
+  }
+}
+
+const formatValue = (field: string, value: string): string => {
+  return VALUE_LABELS[field]?.[value] || value
+}
+
+/**
+ * Calculate Pearson correlation coefficient between two numeric arrays
+ */
+const calculateCorrelation = (x: number[], y: number[]): number => {
+  if (x.length !== y.length || x.length < 2) return 0
+
+  const n = x.length
+  const sumX = x.reduce((a, b) => a + b, 0)
+  const sumY = y.reduce((a, b) => a + b, 0)
+  const sumXY = x.reduce((total, xi, i) => total + xi * y[i], 0)
+  const sumX2 = x.reduce((total, xi) => total + xi * xi, 0)
+  const sumY2 = y.reduce((total, yi) => total + yi * yi, 0)
+
+  const numerator = n * sumXY - sumX * sumY
+  const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY))
+
+  if (denominator === 0) return 0
+  return numerator / denominator
+}
+
+/**
+ * Calculate variance of an array
+ */
+const calculateVariance = (values: number[]): number => {
+  if (values.length === 0) return 0
+  const avg = values.reduce((a, b) => a + b, 0) / values.length
+  return values.reduce((sum, v) => sum + (v - avg) ** 2, 0) / values.length
+}
+
+/**
+ * Detect consensus items (>60% agreement)
+ */
+const detectConsensus = (responses: SurveyResponse[]): ConsensusItem[] => {
+  const consensus: ConsensusItem[] = []
+  const total = responses.length
+  if (total < 2) return consensus
+
+  const CONSENSUS_THRESHOLD = 0.6
+
+  // Check single-choice fields
+  const singleChoiceFields = ['combat_style', 'campaign_length', 'session_frequency', 'character_creation']
+
+  singleChoiceFields.forEach((field) => {
+    const counts: Record<string, number> = {}
+    responses.forEach((r) => {
+      const value = (r.answers as SurveyAnswers)[field as keyof SurveyAnswers] as string
+      if (value) {
+        counts[value] = (counts[value] || 0) + 1
+      }
+    })
+
+    Object.entries(counts).forEach(([value, count]) => {
+      const percentage = count / total
+      if (percentage >= CONSENSUS_THRESHOLD) {
+        consensus.push({
+          field: FIELD_LABELS[field] || field,
+          value: formatValue(field, value),
+          percentage,
+          count,
+          total
+        })
+      }
+    })
+  })
+
+  // Check multi-select fields for strong preferences
+  const multiSelectFields = ['theme', 'tone_preferences']
+
+  multiSelectFields.forEach((field) => {
+    const counts: Record<string, number> = {}
+    responses.forEach((r) => {
+      const values = (r.answers as SurveyAnswers)[field as keyof SurveyAnswers] as string[]
+      if (values && Array.isArray(values)) {
+        values.forEach((v) => {
+          counts[v] = (counts[v] || 0) + 1
+        })
+      }
+    })
+
+    Object.entries(counts).forEach(([value, count]) => {
+      const percentage = count / total
+      if (percentage >= CONSENSUS_THRESHOLD) {
+        consensus.push({
+          field: FIELD_LABELS[field] || field,
+          value: formatValue(field, value),
+          percentage,
+          count,
+          total
+        })
+      }
+    })
+  })
+
+  // Sort by percentage descending
+  return consensus.sort((a, b) => b.percentage - a.percentage)
+}
+
+/**
+ * Detect conflicts (high variance or split preferences)
+ */
+const detectConflicts = (responses: SurveyResponse[]): ConflictItem[] => {
+  const conflicts: ConflictItem[] = []
+  const total = responses.length
+  if (total < 2) return conflicts
+
+  // Check numeric fields for high variance
+  const numericFields = [
+    { key: 'rules_complexity', label: 'Rules Complexity' },
+    { key: 'experience_level', label: 'Experience Level' }
+  ]
+
+  numericFields.forEach(({ key, label }) => {
+    const values: number[] = []
+    responses.forEach((r) => {
+      const value = (r.answers as SurveyAnswers)[key as keyof SurveyAnswers] as number
+      if (value !== undefined && value !== null) {
+        values.push(value)
+      }
+    })
+
+    if (values.length >= 2) {
+      const variance = calculateVariance(values)
+      const min = Math.min(...values)
+      const max = Math.max(...values)
+
+      // High variance threshold (>1.5 on a 1-5 scale means significant spread)
+      if (variance > 1.5 || (max - min >= 3)) {
+        conflicts.push({
+          field: label,
+          description: `Players vary widely (range: ${min}-${max})`,
+          values: [],
+          variance
+        })
+      }
+    }
+  })
+
+  // Check single-choice fields for splits
+  const singleChoiceFields = ['combat_style', 'campaign_length', 'character_creation']
+
+  singleChoiceFields.forEach((field) => {
+    const counts: Record<string, number> = {}
+    responses.forEach((r) => {
+      const value = (r.answers as SurveyAnswers)[field as keyof SurveyAnswers] as string
+      if (value) {
+        counts[value] = (counts[value] || 0) + 1
+      }
+    })
+
+    const entries = Object.entries(counts).sort((a, b) => b[1] - a[1])
+
+    // Check if top two options are close (within 1 vote or both > 30%)
+    if (entries.length >= 2) {
+      const [first, second] = entries
+      const firstPct = first[1] / total
+      const secondPct = second[1] / total
+
+      if (secondPct >= 0.3 && firstPct < 0.6) {
+        conflicts.push({
+          field: FIELD_LABELS[field] || field,
+          description: 'Group is split between options',
+          values: entries.map(([value, count]) => ({
+            value: formatValue(field, value),
+            count
+          }))
+        })
+      }
+    }
+  })
+
+  // Check content boundaries for differing comfort levels
+  const boundaryDifferences: Record<string, number> = {}
+  responses.forEach((r) => {
+    const boundaries = (r.answers as SurveyAnswers).content_boundaries as string[]
+    if (boundaries && Array.isArray(boundaries)) {
+      boundaries.forEach((b) => {
+        boundaryDifferences[b] = (boundaryDifferences[b] || 0) + 1
+      })
+    }
+  })
+
+  // If some players have boundaries others don't, flag it
+  Object.entries(boundaryDifferences).forEach(([_boundary, count]) => {
+    if (count > 0 && count < total) {
+      const existing = conflicts.find((c) => c.field === 'Content Boundaries')
+      if (!existing) {
+        conflicts.push({
+          field: 'Content Boundaries',
+          description: 'Players have different comfort levels',
+          values: Object.entries(boundaryDifferences).map(([value, cnt]) => ({
+            value,
+            count: cnt
+          }))
+        })
+      }
+    }
+  })
+
+  return conflicts
+}
+
+/**
+ * Calculate correlations between numeric fields
+ */
+const calculateCorrelations = (responses: SurveyResponse[]): Correlation[] => {
+  const correlations: Correlation[] = []
+  if (responses.length < 3) return correlations
+
+  // Extract numeric values
+  const data: Record<string, number[]> = {
+    experience: [],
+    rules_complexity: [],
+    combat: [],
+    puzzles: [],
+    diplomacy: [],
+    exploration: []
+  }
+
+  responses.forEach((r) => {
+    const answers = r.answers as SurveyAnswers
+    if (answers.experience_level) data.experience.push(answers.experience_level)
+    if (answers.rules_complexity) data.rules_complexity.push(answers.rules_complexity)
+    if (answers.activity_preferences) {
+      data.combat.push(answers.activity_preferences.combat || 0)
+      data.puzzles.push(answers.activity_preferences.puzzles || 0)
+      data.diplomacy.push(answers.activity_preferences.diplomacy || 0)
+      data.exploration.push(answers.activity_preferences.exploration || 0)
+    }
+  })
+
+  // Calculate interesting correlations
+  const pairs = [
+    {
+      f1: 'experience',
+      f2: 'rules_complexity',
+      desc: 'Experience Level vs Rules Complexity'
+    },
+    {
+      f1: 'experience',
+      f2: 'combat',
+      desc: 'Experience Level vs Combat Interest'
+    },
+    {
+      f1: 'rules_complexity',
+      f2: 'combat',
+      desc: 'Rules Complexity vs Combat Interest'
+    },
+    {
+      f1: 'combat',
+      f2: 'exploration',
+      desc: 'Combat vs Exploration Interest'
+    },
+    {
+      f1: 'puzzles',
+      f2: 'diplomacy',
+      desc: 'Puzzles vs Diplomacy Interest'
+    }
+  ]
+
+  pairs.forEach(({ f1, f2, desc }) => {
+    if (data[f1].length >= 3 && data[f2].length >= 3) {
+      const coef = calculateCorrelation(data[f1], data[f2])
+      // Only report meaningful correlations (|r| > 0.4)
+      if (Math.abs(coef) > 0.4) {
+        correlations.push({
+          field1: f1,
+          field2: f2,
+          coefficient: coef,
+          description: desc
+        })
+      }
+    }
+  })
+
+  return correlations.sort((a, b) => Math.abs(b.coefficient) - Math.abs(a.coefficient))
+}
+
+/**
+ * Game system recommendation database
+ */
+interface GameSystem {
+  name: string
+  description: string
+  themes: string[]
+  complexity: [number, number] // min-max range
+  combatStyle: string[]
+  strengths: string[]
+}
+
+const GAME_SYSTEMS: GameSystem[] = [
+  {
+    name: 'Starfinder',
+    description: 'Sci-fi adventure with tactical combat and deep character options',
+    themes: ['scifi'],
+    complexity: [3, 4],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Stars Without Number',
+    description: 'Old-school sci-fi with sandbox gameplay and faction rules',
+    themes: ['scifi'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid', 'narrative'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Mothership',
+    description: 'Sci-fi horror with simple rules and high tension',
+    themes: ['scifi', 'horror'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['exploration']
+  },
+  {
+    name: 'Traveller',
+    description: 'Classic hard sci-fi with detailed world generation',
+    themes: ['scifi'],
+    complexity: [3, 4],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'D&D 5th Edition',
+    description: 'Popular fantasy with balanced rules and extensive support',
+    themes: ['fantasy'],
+    complexity: [2, 3],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Pathfinder 2e',
+    description: 'Tactical fantasy with deep character customization',
+    themes: ['fantasy'],
+    complexity: [4, 5],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Dungeon World',
+    description: 'Narrative fantasy with fiction-first gameplay',
+    themes: ['fantasy'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Call of Cthulhu',
+    description: 'Investigative horror with sanity mechanics',
+    themes: ['horror', 'historical', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Dread',
+    description: 'Horror using Jenga for tension and stakes',
+    themes: ['horror'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy']
+  },
+  {
+    name: 'Cyberpunk RED',
+    description: 'Gritty cyberpunk with style over substance',
+    themes: ['cyberpunk'],
+    complexity: [3, 4],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'diplomacy']
+  },
+  {
+    name: 'Blades in the Dark',
+    description: 'Heist-focused with innovative flashback mechanics',
+    themes: ['fantasy', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Apocalypse World',
+    description: 'Post-apocalyptic with player-driven narratives',
+    themes: ['postapoc'],
+    complexity: [2, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'exploration']
+  },
+  {
+    name: 'GURPS',
+    description: 'Universal system for any setting with detailed simulation',
+    themes: ['scifi', 'fantasy', 'modern', 'historical'],
+    complexity: [4, 5],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Savage Worlds',
+    description: 'Fast, furious, fun - pulpy action in any genre',
+    themes: ['scifi', 'fantasy', 'modern', 'historical', 'postapoc'],
+    complexity: [2, 3],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Fate Core',
+    description: 'Narrative-focused with aspects and fate points',
+    themes: ['scifi', 'fantasy', 'modern'],
+    complexity: [2, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Mörk Borg',
+    description: 'Doom metal fantasy with brutal rules and striking art',
+    themes: ['fantasy', 'horror'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'CY_BORG',
+    description: 'Cyberpunk chaos with the Mörk Borg engine',
+    themes: ['cyberpunk'],
+    complexity: [1, 2],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Death in Space',
+    description: 'Industrial sci-fi horror with cosmic dread',
+    themes: ['scifi', 'horror'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'puzzles']
+  },
+  {
+    name: 'Alien RPG',
+    description: 'Cinematic sci-fi horror in the Alien universe',
+    themes: ['scifi', 'horror'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Coriolis',
+    description: 'Arabian Nights in space with mystical sci-fi',
+    themes: ['scifi'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Old School Essentials',
+    description: 'Classic B/X D&D rules, streamlined and clarified',
+    themes: ['fantasy'],
+    complexity: [2, 2],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  }
+]
+
+/**
+ * Generate game system recommendations based on group preferences
+ */
+const generateRecommendations = (
+  responses: SurveyResponse[],
+  summary: SurveySummary
+): GameSystemRecommendation[] => {
+  if (responses.length === 0) return []
+
+  const recommendations: GameSystemRecommendation[] = []
+
+  // Get top themes
+  const topThemes = Object.entries(summary.themeCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([theme]) => theme)
+
+  // Get average rules complexity
+  const avgComplexity = summary.avgRulesComplexity
+
+  // Get combat style preference
+  const topCombatStyle = Object.entries(summary.combatStyleCounts).sort((a, b) => b[1] - a[1])[0]?.[0]
+
+  // Get top activity
+  const activities = summary.avgActivityPreferences
+  const topActivity = Object.entries(activities).sort((a, b) => b[1] - a[1])[0]?.[0]
+
+  GAME_SYSTEMS.forEach((system) => {
+    let score = 0
+    const reasons: string[] = []
+
+    // Theme match (most important)
+    const themeMatch = topThemes.some((t) => system.themes.includes(t))
+    if (themeMatch) {
+      score += 40
+      const matchedTheme = topThemes.find((t) => system.themes.includes(t))
+      reasons.push(`Matches ${formatValue('theme', matchedTheme || '')} theme`)
+    }
+
+    // Complexity match
+    const [minC, maxC] = system.complexity
+    if (avgComplexity >= minC && avgComplexity <= maxC) {
+      score += 25
+      reasons.push('Fits desired rules complexity')
+    } else if (Math.abs(avgComplexity - (minC + maxC) / 2) <= 1) {
+      score += 10
+      reasons.push('Close to desired complexity')
+    }
+
+    // Combat style match
+    if (topCombatStyle && system.combatStyle.includes(topCombatStyle)) {
+      score += 20
+      reasons.push(`Supports ${formatValue('combat_style', topCombatStyle)} combat`)
+    }
+
+    // Activity strength match
+    if (topActivity && system.strengths.includes(topActivity)) {
+      score += 15
+      reasons.push(`Strong ${topActivity} support`)
+    }
+
+    if (score >= 40 && reasons.length >= 2) {
+      recommendations.push({
+        name: system.name,
+        description: system.description,
+        matchScore: score,
+        matchReasons: reasons
+      })
+    }
+  })
+
+  return recommendations.sort((a, b) => b.matchScore - a.matchScore).slice(0, 5)
+}
+
+/**
+ * Generate Session Zero discussion topics
+ */
+const generateSessionZeroTopics = (
+  conflicts: ConflictItem[],
+  responses: SurveyResponse[]
+): SessionZeroTopic[] => {
+  const topics: SessionZeroTopic[] = []
+
+  // Add topics from detected conflicts
+  conflicts.forEach((conflict) => {
+    let priority: 'high' | 'medium' | 'low' = 'medium'
+
+    if (conflict.field === 'Content Boundaries') {
+      priority = 'high'
+    } else if (conflict.field === 'Rules Complexity' || conflict.field === 'Combat Style') {
+      priority = 'high'
+    }
+
+    topics.push({
+      topic: conflict.field,
+      reason: conflict.description,
+      priority
+    })
+  })
+
+  // Check for any content boundary concerns
+  const allBoundaries = new Set<string>()
+  responses.forEach((r) => {
+    const boundaries = (r.answers as SurveyAnswers).content_boundaries as string[]
+    if (boundaries && Array.isArray(boundaries)) {
+      boundaries.forEach((b) => allBoundaries.add(b))
+    }
+  })
+
+  if (allBoundaries.size > 0 && !topics.find((t) => t.topic === 'Content Boundaries')) {
+    topics.push({
+      topic: 'Content Boundaries',
+      reason: `${allBoundaries.size} content types flagged by players`,
+      priority: 'high'
+    })
+  }
+
+  // Check experience level spread
+  const expLevels: number[] = []
+  responses.forEach((r) => {
+    const exp = (r.answers as SurveyAnswers).experience_level
+    if (exp) expLevels.push(exp)
+  })
+
+  if (expLevels.length > 0) {
+    const minExp = Math.min(...expLevels)
+    const maxExp = Math.max(...expLevels)
+    if (maxExp - minExp >= 2 && !topics.find((t) => t.topic === 'Experience Level')) {
+      topics.push({
+        topic: 'Experience Level',
+        reason: `Mixed experience levels (${minExp}-${maxExp}) - discuss pacing and teaching`,
+        priority: 'medium'
+      })
+    }
+  }
+
+  // Always suggest discussing tone if there are multiple preferences
+  const toneSet = new Set<string>()
+  responses.forEach((r) => {
+    const tones = (r.answers as SurveyAnswers).tone_preferences as string[]
+    if (tones && Array.isArray(tones)) {
+      tones.forEach((t) => toneSet.add(t))
+    }
+  })
+
+  if (toneSet.size >= 3 && !topics.find((t) => t.topic === 'Tone Preferences')) {
+    topics.push({
+      topic: 'Tone Preferences',
+      reason: 'Multiple tone preferences selected - clarify expectations',
+      priority: 'low'
+    })
+  }
+
+  return topics.sort((a, b) => {
+    const priorityOrder = { high: 0, medium: 1, low: 2 }
+    return priorityOrder[a.priority] - priorityOrder[b.priority]
+  })
+}
+
+/**
+ * Generate complete group insights
+ */
+export const generateGroupInsights = (
+  responses: SurveyResponse[],
+  summary: SurveySummary
+): GroupInsights => {
+  const consensus = detectConsensus(responses)
+  const conflicts = detectConflicts(responses)
+  const correlations = calculateCorrelations(responses)
+  const recommendations = generateRecommendations(responses, summary)
+  const sessionZeroTopics = generateSessionZeroTopics(conflicts, responses)
+
+  return {
+    consensus,
+    conflicts,
+    correlations,
+    recommendations,
+    sessionZeroTopics
+  }
 }

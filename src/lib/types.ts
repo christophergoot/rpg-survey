@@ -263,3 +263,47 @@ export interface SurveySummary {
   languageDistribution: Record<string, number>
   avgLanguageProficiency: Record<string, number> // e.g., { "en": 4.2, "es": 2.8 }
 }
+
+// Advanced Analytics Types
+export interface Correlation {
+  field1: string
+  field2: string
+  coefficient: number
+  description: string
+}
+
+export interface ConsensusItem {
+  field: string
+  value: string
+  percentage: number
+  count: number
+  total: number
+}
+
+export interface ConflictItem {
+  field: string
+  description: string
+  values: { value: string; count: number }[]
+  variance?: number
+}
+
+export interface GameSystemRecommendation {
+  name: string
+  description: string
+  matchScore: number
+  matchReasons: string[]
+}
+
+export interface SessionZeroTopic {
+  topic: string
+  reason: string
+  priority: 'high' | 'medium' | 'low'
+}
+
+export interface GroupInsights {
+  consensus: ConsensusItem[]
+  conflicts: ConflictItem[]
+  correlations: Correlation[]
+  recommendations: GameSystemRecommendation[]
+  sessionZeroTopics: SessionZeroTopic[]
+}

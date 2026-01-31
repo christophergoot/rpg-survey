@@ -4,11 +4,12 @@ import { useTranslation } from 'react-i18next'
 import { Header } from '../components/common/Header'
 import { useSurveyById } from '../hooks/useSurvey'
 import { useSurveyResponses } from '../hooks/useResponses'
-import { calculateSummary } from '../utils/analytics'
+import { calculateSummary, generateGroupInsights } from '../utils/analytics'
 import { SummaryStats } from '../components/results/SummaryStats'
 import { ThemeChart } from '../components/results/ThemeChart'
 import { ActivityPreferencesChart } from '../components/results/ActivityPreferencesChart'
 import { LanguageProficiencyStats } from '../components/results/LanguageProficiencyStats'
+import { GroupInsights } from '../components/results/GroupInsights'
 import { ResponseList } from '../components/results/ResponseList'
 import { ExportButton } from '../components/results/ExportButton'
 import '../lib/chartConfig' // Import to register Chart.js components
@@ -24,6 +25,7 @@ export const ResultsDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'summary' | 'individual'>('summary')
 
   const summary = calculateSummary(responses)
+  const insights = generateGroupInsights(responses, summary)
 
   const copyShareLink = () => {
     if (!survey) return
@@ -165,6 +167,9 @@ export const ResultsDashboard: React.FC = () => {
                 <LanguageProficiencyStats
                   avgLanguageProficiency={summary.avgLanguageProficiency}
                 />
+
+                {/* Group Insights */}
+                <GroupInsights insights={insights} totalResponses={responses.length} />
               </>
             ) : (
               <div className="text-center py-12 bg-dark-surface rounded-lg border border-dark-elevated">
