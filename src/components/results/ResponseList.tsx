@@ -41,6 +41,43 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
       .join(' ')
   }
 
+  const LANGUAGE_NAMES: Record<string, string> = {
+    en: 'English',
+    es: 'Spanish',
+    fr: 'French',
+    de: 'German',
+    pt: 'Portuguese'
+  }
+
+  const PROFICIENCY_LABELS: Record<number, string> = {
+    0: 'None',
+    1: 'Beginner',
+    2: 'Elementary',
+    3: 'Intermediate',
+    4: 'Advanced',
+    5: 'Native'
+  }
+
+  const formatLanguageProficiency = (proficiency: Record<string, number> | undefined): React.ReactNode => {
+    if (!proficiency || Object.keys(proficiency).length === 0) return null
+
+    return (
+      <div className="flex flex-wrap gap-2">
+        {Object.entries(proficiency).map(([lang, level]) => (
+          <div
+            key={lang}
+            className="flex items-center gap-1.5 px-2 py-1 bg-dark-bg rounded-md border border-dark-elevated"
+          >
+            <span className="text-xs text-gray-400">{LANGUAGE_NAMES[lang] || lang.toUpperCase()}:</span>
+            <span className={`text-xs font-medium ${level >= 3 ? 'text-green-400' : level >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
+              {PROFICIENCY_LABELS[level] || level}
+            </span>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
   const handleStartRename = (response: SurveyResponse, e: React.MouseEvent) => {
     e.stopPropagation()
     setEditingId(response.id)
@@ -142,10 +179,15 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                       <div className="font-semibold text-white">
                         {response.player_name || 'Anonymous Player'}
                       </div>
-                      <div className="text-sm text-gray-400">
+                      <div className="text-sm text-gray-400 mb-1">
                         {new Date(response.submitted_at).toLocaleString()} •{' '}
                         {response.language.toUpperCase()}
                       </div>
+                      {answers.language_proficiency && (
+                        <div className="mt-1">
+                          {formatLanguageProficiency(answers.language_proficiency)}
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
@@ -240,7 +282,11 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                     <div className="text-sm font-medium text-gray-400">
                       {formatQuestionKey(key)}
                     </div>
-                    <div className="text-white">{formatAnswer(key, value)}</div>
+                    {key === 'language_proficiency' ? (
+                      formatLanguageProficiency(value as Record<string, number>)
+                    ) : (
+                      <div className="text-white">{formatAnswer(key, value)}</div>
+                    )}
                   </div>
                 ))}
               </div>

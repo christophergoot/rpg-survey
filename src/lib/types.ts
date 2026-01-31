@@ -261,4 +261,5 @@ export interface SurveySummary {
   avgExperienceLevel: number
   tonePreferencesCounts: Record<string, number>
   languageDistribution: Record<string, number>
+  avgLanguageProficiency: Record<string, number> // e.g., { "en": 4.2, "es": 2.8 }
 }

@@ -8,6 +8,7 @@ import { calculateSummary } from '../utils/analytics'
 import { SummaryStats } from '../components/results/SummaryStats'
 import { ThemeChart } from '../components/results/ThemeChart'
 import { ActivityPreferencesChart } from '../components/results/ActivityPreferencesChart'
+import { LanguageProficiencyStats } from '../components/results/LanguageProficiencyStats'
 import { ResponseList } from '../components/results/ResponseList'
 import { ExportButton } from '../components/results/ExportButton'
 import '../lib/chartConfig' // Import to register Chart.js components
@@ -148,16 +149,23 @@ export const ResultsDashboard: React.FC = () => {
 
             {/* Charts */}
             {responses.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-dark-surface rounded-lg border border-dark-elevated p-6">
-                  <ThemeChart themeCounts={summary.themeCounts} />
+              <>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-dark-surface rounded-lg border border-dark-elevated p-6">
+                    <ThemeChart themeCounts={summary.themeCounts} />
+                  </div>
+                  <div className="bg-dark-surface rounded-lg border border-dark-elevated p-6">
+                    <ActivityPreferencesChart
+                      avgActivityPreferences={summary.avgActivityPreferences}
+                    />
+                  </div>
                 </div>
-                <div className="bg-dark-surface rounded-lg border border-dark-elevated p-6">
-                  <ActivityPreferencesChart
-                    avgActivityPreferences={summary.avgActivityPreferences}
-                  />
-                </div>
-              </div>
+
+                {/* Language Proficiency */}
+                <LanguageProficiencyStats
+                  avgLanguageProficiency={summary.avgLanguageProficiency}
+                />
+              </>
             ) : (
               <div className="text-center py-12 bg-dark-surface rounded-lg border border-dark-elevated">
                 <div className="text-6xl mb-4">📭</div>

@@ -52,26 +52,26 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'c
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1 border border-dark-elevated">
       <button
         onClick={() => handleLanguageChange('en')}
-        className={`px-3 py-1 rounded transition-all ${
+        className={`px-3 py-1.5 rounded-md transition-all text-sm font-medium ${
           language === 'en'
-            ? 'bg-cyber-500 text-white'
-            : 'bg-dark-surface hover:bg-dark-elevated text-gray-400'
+            ? 'bg-cyber-500 text-white shadow-sm'
+            : 'hover:bg-dark-elevated text-gray-400 hover:text-white'
         }`}
       >
-        EN
+        🇺🇸 EN
       </button>
       <button
         onClick={() => handleLanguageChange('es')}
-        className={`px-3 py-1 rounded transition-all ${
+        className={`px-3 py-1.5 rounded-md transition-all text-sm font-medium ${
           language === 'es'
-            ? 'bg-cyber-500 text-white'
-            : 'bg-dark-surface hover:bg-dark-elevated text-gray-400'
+            ? 'bg-cyber-500 text-white shadow-sm'
+            : 'hover:bg-dark-elevated text-gray-400 hover:text-white'
         }`}
       >
-        ES
+        🇪🇸 ES
       </button>
     </div>
   )

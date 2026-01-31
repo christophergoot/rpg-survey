@@ -19,7 +19,8 @@ export const calculateSummary = (responses: SurveyResponse[]): SurveySummary => 
       campaignLengthCounts: {},
       avgExperienceLevel: 0,
       tonePreferencesCounts: {},
-      languageDistribution: {}
+      languageDistribution: {},
+      avgLanguageProficiency: {}
     }
   }
 
@@ -37,12 +38,15 @@ export const calculateSummary = (responses: SurveyResponse[]): SurveySummary => 
     campaignLengthCounts: {},
     avgExperienceLevel: 0,
     tonePreferencesCounts: {},
-    languageDistribution: {}
+    languageDistribution: {},
+    avgLanguageProficiency: {}
   }
 
   let rulesComplexitySum = 0
   let experienceLevelSum = 0
   const activitySums = { combat: 0, puzzles: 0, diplomacy: 0, exploration: 0 }
+  const languageProficiencySums: Record<string, number> = {}
+  const languageProficiencyCounts: Record<string, number> = {}
 
   responses.forEach((response) => {
     const answers = response.answers as SurveyAnswers
@@ -94,6 +98,14 @@ export const calculateSummary = (responses: SurveyResponse[]): SurveySummary => 
     // Count language distribution
     const lang = response.language
     summary.languageDistribution[lang] = (summary.languageDistribution[lang] || 0) + 1
+
+    // Sum language proficiency
+    if (answers.language_proficiency) {
+      Object.entries(answers.language_proficiency).forEach(([language, level]) => {
+        languageProficiencySums[language] = (languageProficiencySums[language] || 0) + level
+        languageProficiencyCounts[language] = (languageProficiencyCounts[language] || 0) + 1
+      })
+    }
   })
 
   // Calculate averages
@@ -105,6 +117,12 @@ export const calculateSummary = (responses: SurveyResponse[]): SurveySummary => 
     diplomacy: activitySums.diplomacy / responses.length,
     exploration: activitySums.exploration / responses.length
   }
+
+  // Calculate average language proficiency
+  Object.keys(languageProficiencySums).forEach((language) => {
+    summary.avgLanguageProficiency[language] =
+      languageProficiencySums[language] / languageProficiencyCounts[language]
+  })
 
   return summary
 }
