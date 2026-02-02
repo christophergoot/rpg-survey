@@ -7,7 +7,8 @@ import type {
   ConflictItem,
   Correlation,
   GameSystemRecommendation,
-  SessionZeroTopic
+  SessionZeroTopic,
+  MatchReason
 } from '../lib/types'
 
 /**
@@ -205,63 +206,6 @@ export const downloadCSV = (csv: string, filename: string): void => {
 // Advanced Analytics - Group Insights
 // ============================================
 
-const FIELD_LABELS: Record<string, string> = {
-  theme: 'Theme',
-  combat_style: 'Combat Style',
-  campaign_length: 'Campaign Length',
-  session_frequency: 'Session Frequency',
-  character_creation: 'Character Creation',
-  rules_complexity: 'Rules Complexity',
-  experience_level: 'Experience Level',
-  tone_preferences: 'Tone Preferences',
-  content_boundaries: 'Content Boundaries'
-}
-
-const VALUE_LABELS: Record<string, Record<string, string>> = {
-  theme: {
-    scifi: 'Sci-Fi',
-    fantasy: 'Fantasy',
-    horror: 'Horror',
-    modern: 'Modern',
-    historical: 'Historical',
-    cyberpunk: 'Cyberpunk',
-    postapoc: 'Post-Apocalyptic'
-  },
-  combat_style: {
-    narrative: 'Narrative/Abstract',
-    tactical: 'Tactical/Grid-based',
-    hybrid: 'Hybrid'
-  },
-  campaign_length: {
-    oneshot: 'One-Shot',
-    short: 'Short Arc (2-5 sessions)',
-    medium: 'Medium Campaign (6-20 sessions)',
-    longterm: 'Long-Term (20+ sessions)'
-  },
-  session_frequency: {
-    weekly: 'Weekly',
-    biweekly: 'Bi-weekly',
-    monthly: 'Monthly',
-    flexible: 'Flexible'
-  },
-  character_creation: {
-    pregen: 'Pre-generated Characters',
-    collaborative: 'Collaborative Creation',
-    full_control: 'Full Player Control'
-  },
-  tone_preferences: {
-    serious: 'Serious',
-    lighthearted: 'Lighthearted',
-    heroic: 'Heroic',
-    gritty: 'Gritty',
-    mysterious: 'Mysterious'
-  }
-}
-
-const formatValue = (field: string, value: string): string => {
-  return VALUE_LABELS[field]?.[value] || value
-}
-
 /**
  * Calculate Pearson correlation coefficient between two numeric arrays
  */
@@ -317,8 +261,8 @@ const detectConsensus = (responses: SurveyResponse[]): ConsensusItem[] => {
       const percentage = count / total
       if (percentage >= CONSENSUS_THRESHOLD) {
         consensus.push({
-          field: FIELD_LABELS[field] || field,
-          value: formatValue(field, value),
+          fieldKey: field,
+          valueKey: value,
           percentage,
           count,
           total
@@ -345,8 +289,8 @@ const detectConsensus = (responses: SurveyResponse[]): ConsensusItem[] => {
       const percentage = count / total
       if (percentage >= CONSENSUS_THRESHOLD) {
         consensus.push({
-          field: FIELD_LABELS[field] || field,
-          value: formatValue(field, value),
+          fieldKey: field,
+          valueKey: value,
           percentage,
           count,
           total
@@ -368,12 +312,9 @@ const detectConflicts = (responses: SurveyResponse[]): ConflictItem[] => {
   if (total < 2) return conflicts
 
   // Check numeric fields for high variance
-  const numericFields = [
-    { key: 'rules_complexity', label: 'Rules Complexity' },
-    { key: 'experience_level', label: 'Experience Level' }
-  ]
+  const numericFields = ['rules_complexity', 'experience_level']
 
-  numericFields.forEach(({ key, label }) => {
+  numericFields.forEach((key) => {
     const values: number[] = []
     responses.forEach((r) => {
       const value = (r.answers as SurveyAnswers)[key as keyof SurveyAnswers] as number
@@ -390,8 +331,9 @@ const detectConflicts = (responses: SurveyResponse[]): ConflictItem[] => {
       // High variance threshold (>1.5 on a 1-5 scale means significant spread)
       if (variance > 1.5 || (max - min >= 3)) {
         conflicts.push({
-          field: label,
-          description: `Players vary widely (range: ${min}-${max})`,
+          fieldKey: key,
+          descriptionKey: 'results.insights.conflicts.varyWidely',
+          descriptionParams: { min, max },
           values: [],
           variance
         })
@@ -421,10 +363,10 @@ const detectConflicts = (responses: SurveyResponse[]): ConflictItem[] => {
 
       if (secondPct >= 0.3 && firstPct < 0.6) {
         conflicts.push({
-          field: FIELD_LABELS[field] || field,
-          description: 'Group is split between options',
+          fieldKey: field,
+          descriptionKey: 'results.insights.conflicts.splitBetweenOptions',
           values: entries.map(([value, count]) => ({
-            value: formatValue(field, value),
+            valueKey: value,
             count
           }))
         })
@@ -446,13 +388,13 @@ const detectConflicts = (responses: SurveyResponse[]): ConflictItem[] => {
   // If some players have boundaries others don't, flag it
   Object.entries(boundaryDifferences).forEach(([_boundary, count]) => {
     if (count > 0 && count < total) {
-      const existing = conflicts.find((c) => c.field === 'Content Boundaries')
+      const existing = conflicts.find((c) => c.fieldKey === 'content_boundaries')
       if (!existing) {
         conflicts.push({
-          field: 'Content Boundaries',
-          description: 'Players have different comfort levels',
+          fieldKey: 'content_boundaries',
+          descriptionKey: 'results.insights.conflicts.differentComfortLevels',
           values: Object.entries(boundaryDifferences).map(([value, cnt]) => ({
-            value,
+            valueKey: value,
             count: cnt
           }))
         })
@@ -497,31 +439,31 @@ const calculateCorrelations = (responses: SurveyResponse[]): Correlation[] => {
     {
       f1: 'experience',
       f2: 'rules_complexity',
-      desc: 'Experience Level vs Rules Complexity'
+      descKey: 'results.insights.correlations.experienceVsComplexity'
     },
     {
       f1: 'experience',
       f2: 'combat',
-      desc: 'Experience Level vs Combat Interest'
+      descKey: 'results.insights.correlations.experienceVsCombat'
     },
     {
       f1: 'rules_complexity',
       f2: 'combat',
-      desc: 'Rules Complexity vs Combat Interest'
+      descKey: 'results.insights.correlations.complexityVsCombat'
     },
     {
       f1: 'combat',
       f2: 'exploration',
-      desc: 'Combat vs Exploration Interest'
+      descKey: 'results.insights.correlations.combatVsExploration'
     },
     {
       f1: 'puzzles',
       f2: 'diplomacy',
-      desc: 'Puzzles vs Diplomacy Interest'
+      descKey: 'results.insights.correlations.puzzlesVsDiplomacy'
     }
   ]
 
-  pairs.forEach(({ f1, f2, desc }) => {
+  pairs.forEach(({ f1, f2, descKey }) => {
     if (data[f1].length >= 3 && data[f2].length >= 3) {
       const coef = calculateCorrelation(data[f1], data[f2])
       // Only report meaningful correlations (|r| > 0.4)
@@ -530,7 +472,7 @@ const calculateCorrelations = (responses: SurveyResponse[]): Correlation[] => {
           field1: f1,
           field2: f2,
           coefficient: coef,
-          description: desc
+          descriptionKey: descKey
         })
       }
     }
@@ -540,11 +482,22 @@ const calculateCorrelations = (responses: SurveyResponse[]): Correlation[] => {
 }
 
 /**
+ * Convert game name to translation key
+ */
+const gameNameToKey = (name: string): string => {
+  return name
+    .toLowerCase()
+    .replace(/['']/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+}
+
+/**
  * Game system recommendation database
  */
 interface GameSystem {
   name: string
-  description: string
+  description: string // English description (used as fallback)
   themes: string[]
   complexity: [number, number] // min-max range
   combatStyle: string[]
@@ -1160,42 +1113,55 @@ const generateRecommendations = (
 
   GAME_SYSTEMS.forEach((system) => {
     let score = 0
-    const reasons: string[] = []
+    const reasons: MatchReason[] = []
 
     // Theme match (most important)
     const themeMatch = topThemes.some((t) => system.themes.includes(t))
     if (themeMatch) {
       score += 40
       const matchedTheme = topThemes.find((t) => system.themes.includes(t))
-      reasons.push(`Matches ${formatValue('theme', matchedTheme || '')} theme`)
+      reasons.push({
+        key: 'results.insights.matchReasons.matchesTheme',
+        params: { theme: matchedTheme || '' }
+      })
     }
 
     // Complexity match
     const [minC, maxC] = system.complexity
     if (avgComplexity >= minC && avgComplexity <= maxC) {
       score += 25
-      reasons.push('Fits desired rules complexity')
+      reasons.push({
+        key: 'results.insights.matchReasons.fitsComplexity'
+      })
     } else if (Math.abs(avgComplexity - (minC + maxC) / 2) <= 1) {
       score += 10
-      reasons.push('Close to desired complexity')
+      reasons.push({
+        key: 'results.insights.matchReasons.closeToComplexity'
+      })
     }
 
     // Combat style match
     if (topCombatStyle && system.combatStyle.includes(topCombatStyle)) {
       score += 20
-      reasons.push(`Supports ${formatValue('combat_style', topCombatStyle)} combat`)
+      reasons.push({
+        key: 'results.insights.matchReasons.supportsCombatStyle',
+        params: { style: topCombatStyle }
+      })
     }
 
     // Activity strength match
     if (topActivity && system.strengths.includes(topActivity)) {
       score += 15
-      reasons.push(`Strong ${topActivity} support`)
+      reasons.push({
+        key: 'results.insights.matchReasons.strongActivitySupport',
+        params: { activity: topActivity }
+      })
     }
 
     if (score >= 40 && reasons.length >= 2) {
       recommendations.push({
         name: system.name,
-        description: system.description,
+        descriptionKey: `results.insights.games.${gameNameToKey(system.name)}`,
         matchScore: score,
         matchReasons: reasons
       })
@@ -1218,15 +1184,16 @@ const generateSessionZeroTopics = (
   conflicts.forEach((conflict) => {
     let priority: 'high' | 'medium' | 'low' = 'medium'
 
-    if (conflict.field === 'Content Boundaries') {
+    if (conflict.fieldKey === 'content_boundaries') {
       priority = 'high'
-    } else if (conflict.field === 'Rules Complexity' || conflict.field === 'Combat Style') {
+    } else if (conflict.fieldKey === 'rules_complexity' || conflict.fieldKey === 'combat_style') {
       priority = 'high'
     }
 
     topics.push({
-      topic: conflict.field,
-      reason: conflict.description,
+      topicKey: conflict.fieldKey,
+      reasonKey: conflict.descriptionKey,
+      reasonParams: conflict.descriptionParams,
       priority
     })
   })
@@ -1240,10 +1207,11 @@ const generateSessionZeroTopics = (
     }
   })
 
-  if (allBoundaries.size > 0 && !topics.find((t) => t.topic === 'Content Boundaries')) {
+  if (allBoundaries.size > 0 && !topics.find((t) => t.topicKey === 'content_boundaries')) {
     topics.push({
-      topic: 'Content Boundaries',
-      reason: `${allBoundaries.size} content types flagged by players`,
+      topicKey: 'content_boundaries',
+      reasonKey: 'results.insights.sessionZero.contentTypesFlagged',
+      reasonParams: { count: allBoundaries.size },
       priority: 'high'
     })
   }
@@ -1258,10 +1226,11 @@ const generateSessionZeroTopics = (
   if (expLevels.length > 0) {
     const minExp = Math.min(...expLevels)
     const maxExp = Math.max(...expLevels)
-    if (maxExp - minExp >= 2 && !topics.find((t) => t.topic === 'Experience Level')) {
+    if (maxExp - minExp >= 2 && !topics.find((t) => t.topicKey === 'experience_level')) {
       topics.push({
-        topic: 'Experience Level',
-        reason: `Mixed experience levels (${minExp}-${maxExp}) - discuss pacing and teaching`,
+        topicKey: 'experience_level',
+        reasonKey: 'results.insights.sessionZero.mixedExperience',
+        reasonParams: { min: minExp, max: maxExp },
         priority: 'medium'
       })
     }
@@ -1276,10 +1245,10 @@ const generateSessionZeroTopics = (
     }
   })
 
-  if (toneSet.size >= 3 && !topics.find((t) => t.topic === 'Tone Preferences')) {
+  if (toneSet.size >= 3 && !topics.find((t) => t.topicKey === 'tone_preferences')) {
     topics.push({
-      topic: 'Tone Preferences',
-      reason: 'Multiple tone preferences selected - clarify expectations',
+      topicKey: 'tone_preferences',
+      reasonKey: 'results.insights.sessionZero.multipleTonePreferences',
       priority: 'low'
     })
   }

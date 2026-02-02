@@ -1,29 +1,8 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface LanguageProficiencyStatsProps {
   avgLanguageProficiency: Record<string, number>
-}
-
-const LANGUAGE_NAMES: Record<string, string> = {
-  en: 'English',
-  es: 'Spanish',
-  fr: 'French',
-  de: 'German',
-  pt: 'Portuguese'
-}
-
-const PROFICIENCY_LABELS: Record<number, string> = {
-  0: 'None',
-  1: 'Beginner',
-  2: 'Elementary',
-  3: 'Intermediate',
-  4: 'Advanced',
-  5: 'Native'
-}
-
-const getProficiencyLabel = (level: number): string => {
-  const rounded = Math.round(level)
-  return PROFICIENCY_LABELS[rounded] || `Level ${level.toFixed(1)}`
 }
 
 const getProficiencyColor = (level: number): string => {
@@ -37,17 +16,23 @@ const getProficiencyColor = (level: number): string => {
 export const LanguageProficiencyStats: React.FC<LanguageProficiencyStatsProps> = ({
   avgLanguageProficiency
 }) => {
+  const { t } = useTranslation()
   const hasLanguageProficiency = Object.keys(avgLanguageProficiency).length > 0
 
   if (!hasLanguageProficiency) {
     return null
   }
 
+  const getProficiencyLabel = (level: number): string => {
+    const rounded = Math.round(level)
+    return t(`results.values.proficiency.level${rounded}`)
+  }
+
   return (
     <div className="p-6 bg-dark-surface rounded-lg border border-dark-elevated">
       <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
         <span className="text-2xl">🗣️</span>
-        Average Language Proficiency
+        {t('results.languageProficiency.title')}
       </h3>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {Object.entries(avgLanguageProficiency)
@@ -58,7 +43,7 @@ export const LanguageProficiencyStats: React.FC<LanguageProficiencyStatsProps> =
               className="p-4 bg-dark-bg rounded-lg border border-dark-elevated"
             >
               <div className="text-sm text-gray-400 mb-1">
-                {LANGUAGE_NAMES[lang] || lang.toUpperCase()}
+                {t(`results.values.language.${lang}`)}
               </div>
               <div className={`text-2xl font-bold ${getProficiencyColor(level)}`}>
                 {level.toFixed(1)}

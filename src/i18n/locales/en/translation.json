@@ -15,7 +15,8 @@
     "close": "Close",
     "confirm": "Confirm",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "na": "N/A"
   },
   "landing": {
     "title": "RPG Survey Creator",
@@ -144,7 +145,225 @@
       "rulesComplexity": "Rules Complexity Distribution",
       "campaignLength": "Preferred Campaign Length",
       "averageExperience": "Average Experience Level",
-      "tonePreferences": "Tone Preferences"
+      "tonePreferences": "Tone Preferences",
+      "numberOfPlayers": "Number of Players",
+      "avgInterestLevel": "Average Interest Level"
+    },
+    "stats": {
+      "totalResponses": "Total Responses",
+      "mostPopularTheme": "Most Popular Theme",
+      "avgRulesComplexity": "Avg Rules Complexity",
+      "avgExperienceLevel": "Avg Experience Level",
+      "preferredLength": "Preferred Length",
+      "combatInterest": "Combat Interest"
+    },
+    "languageProficiency": {
+      "title": "Average Language Proficiency"
+    },
+    "insights": {
+      "title": "Group Insights",
+      "needMoreResponses": "Need at least 2 responses to generate group insights and recommendations.",
+      "strongConsensus": "Strong Consensus",
+      "noConsensus": "No strong consensus yet. Players have diverse preferences.",
+      "pointsToDiscuss": "Points to Discuss",
+      "noConflicts": "No major conflicts detected. The group seems well aligned!",
+      "playersCount": "{{count}}/{{total}} players",
+      "correlations": "Correlation Insights",
+      "correlationStrong": "Strong",
+      "correlationModerate": "Moderate",
+      "correlationWeak": "Weak",
+      "correlationPositive": "Players who rate one higher tend to rate the other higher",
+      "correlationNegative": "Players who rate one higher tend to rate the other lower",
+      "recommendations": "Recommended Game Systems",
+      "bestMatch": "Best Match",
+      "sessionZeroTopics": "Session Zero Discussion Topics",
+      "priority": {
+        "high": "HIGH",
+        "medium": "MEDIUM",
+        "low": "LOW"
+      },
+      "fields": {
+        "combatStyle": "Combat Style",
+        "campaignLength": "Campaign Length",
+        "sessionFrequency": "Session Frequency",
+        "characterCreation": "Character Creation",
+        "theme": "Theme",
+        "tonePreferences": "Tone Preferences",
+        "rulesComplexity": "Rules Complexity",
+        "experienceLevel": "Experience Level",
+        "contentBoundaries": "Content Boundaries"
+      },
+      "conflicts": {
+        "varyWidely": "Players vary widely (range: {{min}}-{{max}})",
+        "splitBetweenOptions": "Group is split between options",
+        "differentComfortLevels": "Players have different comfort levels"
+      },
+      "correlations": {
+        "experienceVsComplexity": "Experience Level vs Rules Complexity",
+        "experienceVsCombat": "Experience Level vs Combat Interest",
+        "complexityVsCombat": "Rules Complexity vs Combat Interest",
+        "combatVsExploration": "Combat vs Exploration Interest",
+        "puzzlesVsDiplomacy": "Puzzles vs Diplomacy Interest"
+      },
+      "matchReasons": {
+        "matchesTheme": "Matches {{theme}} theme",
+        "fitsComplexity": "Fits desired rules complexity",
+        "closeToComplexity": "Close to desired complexity",
+        "supportsCombatStyle": "Supports {{style}} combat",
+        "strongActivitySupport": "Strong {{activity}} support"
+      },
+      "sessionZero": {
+        "contentTypesFlagged": "{{count}} content types flagged by players",
+        "mixedExperience": "Mixed experience levels ({{min}}-{{max}}) - discuss pacing and teaching",
+        "multipleTonePreferences": "Multiple tone preferences selected - clarify expectations"
+      },
+      "games": {
+        "starfinder": "Sci-fi adventure with tactical combat and deep character options",
+        "stars_without_number": "Old-school sci-fi with sandbox gameplay and faction rules",
+        "worlds_without_number": "Old-school fantasy with sandbox tools and faction rules",
+        "cities_without_number": "Cyberpunk sandbox with Crawford's faction and world-building tools",
+        "ashes_without_number": "Post-apocalyptic survival with zombies and faction play",
+        "mothership": "Sci-fi horror with simple rules and high tension",
+        "traveller": "Classic hard sci-fi with detailed world generation",
+        "d_d_5th_edition": "Popular fantasy with balanced rules and extensive support",
+        "pathfinder_2e": "Tactical fantasy with deep character customization",
+        "dungeon_world": "Narrative fantasy with fiction-first gameplay",
+        "call_of_cthulhu": "Investigative horror with sanity mechanics",
+        "dread": "Horror using Jenga for tension and stakes",
+        "cyberpunk_red": "Gritty cyberpunk with style over substance",
+        "blades_in_the_dark": "Heist-focused with innovative flashback mechanics",
+        "apocalypse_world": "Post-apocalyptic with player-driven narratives",
+        "gurps": "Universal system for any setting with detailed simulation",
+        "savage_worlds": "Fast, furious, fun - pulpy action in any genre",
+        "fate_core": "Narrative-focused with aspects and fate points",
+        "m_rk_borg": "Doom metal fantasy with brutal rules and striking art",
+        "cy_borg": "Cyberpunk chaos with the Mörk Borg engine",
+        "death_in_space": "Industrial sci-fi horror with cosmic dread",
+        "alien_rpg": "Cinematic sci-fi horror in the Alien universe",
+        "coriolis": "Arabian Nights in space with mystical sci-fi",
+        "old_school_essentials": "Classic B/X D&D rules, streamlined and clarified",
+        "fiasco": "GM-less game of powerful ambition and poor impulse control",
+        "pendragon": "Arthurian romance with generational play and passions",
+        "delta_green": "Modern Lovecraftian horror with conspiracy and investigation",
+        "legend_of_the_five_rings": "Samurai drama in a fantastical Asia-inspired setting",
+        "the_one_ring": "Middle-earth adventures faithful to Tolkien's vision",
+        "trail_of_cthulhu": "Investigative horror using the GUMSHOE system",
+        "runequest": "Bronze age fantasy with detailed mythology and cults",
+        "forbidden_lands": "Survival hex-crawl fantasy in a dark, cursed world",
+        "warhammer_fantasy_roleplay": "Grim and perilous adventures in the Old World",
+        "star_wars_ffg": "Narrative dice system in the Star Wars galaxy",
+        "dungeon_crawl_classics": "Gonzo old-school fantasy with wild magic",
+        "nights_black_agents": "Spy thriller meets vampire conspiracy",
+        "mutant_year_zero": "Post-apocalyptic survival with zone exploration",
+        "mouse_guard": "Heroic mice defending their territories",
+        "paranoia": "Darkly comedic dystopia run by an insane computer",
+        "masks_a_new_generation": "Teen superhero drama using Powered by the Apocalypse",
+        "vaesen": "Nordic horror investigating mythological creatures",
+        "monsterhearts": "Messy lives of teenage monsters",
+        "monster_of_the_week": "Hunt monsters like Buffy or Supernatural",
+        "eclipse_phase": "Transhuman conspiracy and horror in the far future",
+        "star_trek_adventures": "Boldly go with the official Star Trek RPG",
+        "burning_wheel": "Character-driven fantasy with deep belief mechanics",
+        "tales_from_the_loop": "80s kids investigating sci-fi mysteries",
+        "ironsworn": "Solo/co-op viking fantasy with oracle tables",
+        "7th_sea": "Swashbuckling adventure in a fantasy Europe",
+        "vampire_the_masquerade": "Personal and political horror as modern vampires",
+        "shadowrun": "Cyberpunk meets fantasy with magic and megacorps",
+        "symbaroum": "Dark fantasy exploring a corrupted forest",
+        "urban_shadows": "Political urban fantasy with supernatural factions",
+        "thousand_year_old_vampire": "Solo journaling as an immortal monster",
+        "microscope": "Collaborative worldbuilding across eons",
+        "the_quiet_year": "Map-drawing game about community survival",
+        "lady_blackbird": "Free steampunk adventure ready to play",
+        "dogs_in_the_vineyard": "Frontier religious enforcers facing moral dilemmas",
+        "ars_magica": "Medieval wizards in detailed covenant play",
+        "unknown_armies": "Postmodern horror with obsession-fueled magic",
+        "the_dresden_files_rpg": "Urban fantasy based on Jim Butcher's novels",
+        "deadlands": "Weird West with horror and steampunk elements",
+        "dark_heresy": "Warhammer 40K investigation and heresy hunting",
+        "rogue_trader": "Warhammer 40K exploration and trade",
+        "basic_fantasy_rpg": "Free old-school fantasy with modern sensibilities",
+        "swords_wizardry": "OD&D retroclone for classic dungeon crawling",
+        "mage_the_ascension": "Reality-bending magic in the World of Darkness",
+        "kult": "Extreme horror exploring hidden reality",
+        "brindlewood_bay": "Cozy mystery with elderly sleuths and dark secrets",
+        "blade_runner_rpg": "Noir investigation in the Blade Runner universe",
+        "cairn": "Rules-light fantasy adventure inspired by Into the Odd",
+        "wasteland_degenerates": "Gonzo post-apocalyptic survival and scavenging"
+      }
+    },
+    "responses": {
+      "notAnswered": "Not answered",
+      "anonymousPlayer": "Anonymous Player",
+      "deleteConfirm": "Delete?"
+    },
+    "values": {
+      "theme": {
+        "scifi": "Sci-Fi",
+        "fantasy": "Fantasy",
+        "horror": "Horror",
+        "modern": "Modern",
+        "historical": "Historical",
+        "cyberpunk": "Cyberpunk",
+        "postapoc": "Post-Apocalyptic"
+      },
+      "campaignLength": {
+        "oneshot": "One-Shot",
+        "short": "Short Arc",
+        "medium": "Medium Campaign",
+        "longterm": "Long-Term"
+      },
+      "activity": {
+        "combat": "Combat",
+        "puzzles": "Puzzles",
+        "diplomacy": "Diplomacy",
+        "exploration": "Exploration"
+      },
+      "combatStyle": {
+        "narrative": "Narrative",
+        "tactical": "Tactical",
+        "hybrid": "Hybrid"
+      },
+      "tone": {
+        "serious": "Serious",
+        "lighthearted": "Lighthearted",
+        "heroic": "Heroic",
+        "gritty": "Gritty",
+        "mysterious": "Mysterious"
+      },
+      "sessionFrequency": {
+        "weekly": "Weekly",
+        "biweekly": "Bi-weekly",
+        "monthly": "Monthly",
+        "flexible": "Flexible"
+      },
+      "characterCreation": {
+        "pregen": "Pre-generated",
+        "collaborative": "Collaborative",
+        "fullControl": "Full Player Control"
+      },
+      "contentBoundaries": {
+        "gore": "Gore",
+        "horror": "Horror",
+        "romance": "Romance",
+        "political": "Political",
+        "none": "None"
+      },
+      "language": {
+        "en": "English",
+        "es": "Spanish",
+        "fr": "French",
+        "de": "German",
+        "pt": "Portuguese"
+      },
+      "proficiency": {
+        "level0": "None",
+        "level1": "Beginner",
+        "level2": "Elementary",
+        "level3": "Intermediate",
+        "level4": "Advanced",
+        "level5": "Native"
+      }
     }
   },
   "navigation": {

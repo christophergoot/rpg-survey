@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import type { SurveySummary } from '../../lib/types'
 
 interface SummaryStatsProps {
@@ -6,6 +7,8 @@ interface SummaryStatsProps {
 }
 
 export const SummaryStats: React.FC<SummaryStatsProps> = ({ summary }) => {
+  const { t } = useTranslation()
+
   const topTheme =
     Object.entries(summary.themeCounts).sort(([, a], [, b]) => b - a)[0]?.[0] || 'N/A'
   const topCampaignLength =
@@ -13,56 +16,43 @@ export const SummaryStats: React.FC<SummaryStatsProps> = ({ summary }) => {
     'N/A'
 
   const formatCampaignLength = (key: string) => {
-    const labels: Record<string, string> = {
-      oneshot: 'One-Shot',
-      short: 'Short Arc',
-      medium: 'Medium Campaign',
-      longterm: 'Long-Term'
-    }
-    return labels[key] || key
+    if (key === 'N/A') return t('common.na')
+    return t(`results.values.campaignLength.${key}`)
   }
 
   const formatTheme = (key: string) => {
-    const labels: Record<string, string> = {
-      scifi: 'Sci-Fi',
-      fantasy: 'Fantasy',
-      horror: 'Horror',
-      modern: 'Modern',
-      historical: 'Historical',
-      cyberpunk: 'Cyberpunk',
-      postapoc: 'Post-Apocalyptic'
-    }
-    return labels[key] || key
+    if (key === 'N/A') return t('common.na')
+    return t(`results.values.theme.${key}`)
   }
 
   const stats = [
     {
-      label: 'Total Responses',
+      label: t('results.stats.totalResponses'),
       value: summary.totalResponses,
       icon: '👥'
     },
     {
-      label: 'Most Popular Theme',
+      label: t('results.stats.mostPopularTheme'),
       value: formatTheme(topTheme),
       icon: '🎭'
     },
     {
-      label: 'Avg Rules Complexity',
+      label: t('results.stats.avgRulesComplexity'),
       value: summary.avgRulesComplexity.toFixed(1) + ' / 5',
       icon: '📚'
     },
     {
-      label: 'Avg Experience Level',
+      label: t('results.stats.avgExperienceLevel'),
       value: summary.avgExperienceLevel.toFixed(1) + ' / 5',
       icon: '⭐'
     },
     {
-      label: 'Preferred Length',
+      label: t('results.stats.preferredLength'),
       value: formatCampaignLength(topCampaignLength),
       icon: '📅'
     },
     {
-      label: 'Combat Interest',
+      label: t('results.stats.combatInterest'),
       value: summary.avgActivityPreferences.combat.toFixed(1) + ' / 5',
       icon: '⚔️'
     }

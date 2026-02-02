@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Bar } from 'react-chartjs-2'
 import { chartColors, defaultChartOptions } from '../../lib/chartConfig'
 
@@ -6,26 +7,18 @@ interface ThemeChartProps {
   themeCounts: Record<string, number>
 }
 
-const themeLabels: Record<string, string> = {
-  scifi: 'Sci-Fi',
-  fantasy: 'Fantasy',
-  horror: 'Horror',
-  modern: 'Modern',
-  historical: 'Historical',
-  cyberpunk: 'Cyberpunk',
-  postapoc: 'Post-Apocalyptic'
-}
-
 export const ThemeChart: React.FC<ThemeChartProps> = ({ themeCounts }) => {
+  const { t } = useTranslation()
+
   const sortedThemes = Object.entries(themeCounts)
     .sort(([, a], [, b]) => b - a)
     .slice(0, 7)
 
   const data = {
-    labels: sortedThemes.map(([key]) => themeLabels[key] || key),
+    labels: sortedThemes.map(([key]) => t(`results.values.theme.${key}`)),
     datasets: [
       {
-        label: 'Number of Players',
+        label: t('results.charts.numberOfPlayers'),
         data: sortedThemes.map(([, count]) => count),
         backgroundColor: chartColors.gradients,
         borderColor: chartColors.primary,
@@ -40,7 +33,7 @@ export const ThemeChart: React.FC<ThemeChartProps> = ({ themeCounts }) => {
       ...defaultChartOptions.plugins,
       title: {
         display: true,
-        text: 'Theme Preferences',
+        text: t('results.charts.themeDistribution'),
         color: '#fff',
         font: {
           size: 16,

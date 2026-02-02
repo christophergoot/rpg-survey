@@ -13,7 +13,7 @@ export const ExportButton: React.FC<ExportButtonProps> = ({ responses, surveyTit
 
   const handleExport = () => {
     if (responses.length === 0) {
-      alert('No responses to export')
+      alert(t('results.noResponses'))
       return
     }
 

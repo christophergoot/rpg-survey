@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Radar } from 'react-chartjs-2'
 import { chartColors } from '../../lib/chartConfig'
 
@@ -14,11 +15,18 @@ interface ActivityPreferencesChartProps {
 export const ActivityPreferencesChart: React.FC<ActivityPreferencesChartProps> = ({
   avgActivityPreferences
 }) => {
+  const { t } = useTranslation()
+
   const data = {
-    labels: ['Combat', 'Puzzles', 'Diplomacy', 'Exploration'],
+    labels: [
+      t('results.values.activity.combat'),
+      t('results.values.activity.puzzles'),
+      t('results.values.activity.diplomacy'),
+      t('results.values.activity.exploration')
+    ],
     datasets: [
       {
-        label: 'Average Interest Level',
+        label: t('results.charts.avgInterestLevel'),
         data: [
           avgActivityPreferences.combat,
           avgActivityPreferences.puzzles,
@@ -45,7 +53,7 @@ export const ActivityPreferencesChart: React.FC<ActivityPreferencesChartProps> =
       },
       title: {
         display: true,
-        text: 'Activity Preferences',
+        text: t('results.charts.activityPreferences'),
         color: '#fff',
         font: {
           size: 16,

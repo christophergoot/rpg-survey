@@ -19,7 +19,7 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
   const deleteResponse = useDeleteResponse()
 
   const formatAnswer = (_key: string, value: any): string => {
-    if (value === null || value === undefined) return 'Not answered'
+    if (value === null || value === undefined) return t('results.responses.notAnswered')
 
     if (Array.isArray(value)) {
       return value.join(', ')
@@ -41,21 +41,12 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
       .join(' ')
   }
 
-  const LANGUAGE_NAMES: Record<string, string> = {
-    en: 'English',
-    es: 'Spanish',
-    fr: 'French',
-    de: 'German',
-    pt: 'Portuguese'
+  const getLanguageName = (lang: string): string => {
+    return t(`results.values.language.${lang}`)
   }
 
-  const PROFICIENCY_LABELS: Record<number, string> = {
-    0: 'None',
-    1: 'Beginner',
-    2: 'Elementary',
-    3: 'Intermediate',
-    4: 'Advanced',
-    5: 'Native'
+  const getProficiencyLabel = (level: number): string => {
+    return t(`results.values.proficiency.level${level}`)
   }
 
   const formatLanguageProficiency = (proficiency: Record<string, number> | undefined): React.ReactNode => {
@@ -68,9 +59,9 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
             key={lang}
             className="flex items-center gap-1.5 px-2 py-1 bg-dark-bg rounded-md border border-dark-elevated"
           >
-            <span className="text-xs text-gray-400">{LANGUAGE_NAMES[lang] || lang.toUpperCase()}:</span>
+            <span className="text-xs text-gray-400">{getLanguageName(lang)}:</span>
             <span className={`text-xs font-medium ${level >= 3 ? 'text-green-400' : level >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
-              {PROFICIENCY_LABELS[level] || level}
+              {getProficiencyLabel(level)}
             </span>
           </div>
         ))}
@@ -165,19 +156,19 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                         onClick={(e) => handleSaveRename(response.id, e)}
                         className="px-3 py-1 bg-cyber-500 hover:bg-cyber-600 text-white text-sm rounded transition-colors"
                       >
-                        Save
+                        {t('common.save')}
                       </button>
                       <button
                         onClick={handleCancelRename}
                         className="px-3 py-1 bg-dark-elevated hover:bg-dark-bg text-white text-sm rounded transition-colors"
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                     </div>
                   ) : (
                     <>
                       <div className="font-semibold text-white">
-                        {response.player_name || 'Anonymous Player'}
+                        {response.player_name || t('results.responses.anonymousPlayer')}
                       </div>
                       <div className="text-sm text-gray-400 mb-1">
                         {new Date(response.submitted_at).toLocaleString()} •{' '}
@@ -240,18 +231,18 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
 
                 {isDeleting && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-red-400 mr-2">Delete?</span>
+                    <span className="text-sm text-red-400 mr-2">{t('results.responses.deleteConfirm')}</span>
                     <button
                       onClick={(e) => handleConfirmDelete(response.id, e)}
                       className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded transition-colors"
                     >
-                      Yes
+                      {t('common.yes')}
                     </button>
                     <button
                       onClick={handleCancelDelete}
                       className="px-3 py-1 bg-dark-elevated hover:bg-dark-bg text-white text-sm rounded transition-colors"
                     >
-                      No
+                      {t('common.no')}
                     </button>
                   </div>
                 )}

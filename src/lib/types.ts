@@ -269,34 +269,41 @@ export interface Correlation {
   field1: string
   field2: string
   coefficient: number
-  description: string
+  descriptionKey: string // Translation key for correlation description
 }
 
 export interface ConsensusItem {
-  field: string
-  value: string
+  fieldKey: string // Key for translation (e.g., 'combat_style')
+  valueKey: string // Key for translation (e.g., 'tactical')
   percentage: number
   count: number
   total: number
 }
 
 export interface ConflictItem {
-  field: string
-  description: string
-  values: { value: string; count: number }[]
+  fieldKey: string // Key for translation
+  descriptionKey: string // Translation key
+  descriptionParams?: Record<string, string | number> // Parameters for interpolation
+  values: { valueKey: string; count: number }[]
   variance?: number
+}
+
+export interface MatchReason {
+  key: string // Translation key
+  params?: Record<string, string> // Parameters for interpolation
 }
 
 export interface GameSystemRecommendation {
   name: string
-  description: string
+  descriptionKey: string // Translation key for description
   matchScore: number
-  matchReasons: string[]
+  matchReasons: MatchReason[]
 }
 
 export interface SessionZeroTopic {
-  topic: string
-  reason: string
+  topicKey: string // Translation key
+  reasonKey: string // Translation key
+  reasonParams?: Record<string, string | number> // Parameters for interpolation
   priority: 'high' | 'medium' | 'low'
 }
 
