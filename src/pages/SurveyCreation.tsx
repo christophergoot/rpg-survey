@@ -9,10 +9,20 @@ export const SurveyCreation: React.FC = () => {
   const navigate = useNavigate()
   const createSurvey = useCreateSurvey()
 
+  const AVAILABLE_LANGUAGES = [
+    { code: 'en', flag: '🇺🇸', name: 'English' },
+    { code: 'es', flag: '🇪🇸', name: 'Español' },
+    { code: 'fr', flag: '🇫🇷', name: 'Français' },
+    { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
+    { code: 'nl', flag: '🇳🇱', name: 'Nederlands' },
+    { code: 'it', flag: '🇮🇹', name: 'Italiano' },
+    { code: 'pt', flag: '🇧🇷', name: 'Português' }
+  ]
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    supportedLanguages: ['en', 'es'] as string[]
+    supportedLanguages: ['en'] as string[]
   })
   const [error, setError] = useState<string | null>(null)
 
@@ -136,25 +146,18 @@ export const SurveyCreation: React.FC = () => {
                 <p className="text-sm text-gray-500 mb-3">
                   {t('survey.create.supportedLanguagesHelp')}
                 </p>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.supportedLanguages.includes('en')}
-                      onChange={() => handleLanguageToggle('en')}
-                      className="w-5 h-5 rounded border-gray-600 text-cyber-500 focus:ring-cyber-500 focus:ring-offset-0 bg-dark-bg"
-                    />
-                    <span className="text-white">🇺🇸 English</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={formData.supportedLanguages.includes('es')}
-                      onChange={() => handleLanguageToggle('es')}
-                      className="w-5 h-5 rounded border-gray-600 text-cyber-500 focus:ring-cyber-500 focus:ring-offset-0 bg-dark-bg"
-                    />
-                    <span className="text-white">🇪🇸 Español</span>
-                  </label>
+                <div className="flex flex-wrap gap-4">
+                  {AVAILABLE_LANGUAGES.map((lang) => (
+                    <label key={lang.code} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.supportedLanguages.includes(lang.code)}
+                        onChange={() => handleLanguageToggle(lang.code)}
+                        className="w-5 h-5 rounded border-gray-600 text-cyber-500 focus:ring-cyber-500 focus:ring-offset-0 bg-dark-bg"
+                      />
+                      <span className="text-white">{lang.flag} {lang.name}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 

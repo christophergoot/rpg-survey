@@ -23,7 +23,7 @@ export const useSurveyQuestions = () => {
 /**
  * Fetch question translations for a specific language
  */
-export const useQuestionTranslations = (language: 'en' | 'es') => {
+export const useQuestionTranslations = (language: string) => {
   return useQuery({
     queryKey: ['question-translations', language],
     queryFn: async () => {
@@ -42,7 +42,7 @@ export const useQuestionTranslations = (language: 'en' | 'es') => {
 /**
  * Fetch questions with translations combined
  */
-export const useQuestionsWithTranslations = (language: 'en' | 'es') => {
+export const useQuestionsWithTranslations = (language: string) => {
   const { data: questions, isLoading: questionsLoading } = useSurveyQuestions()
   const { data: translations, isLoading: translationsLoading } =
     useQuestionTranslations(language)

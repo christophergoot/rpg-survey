@@ -88,7 +88,7 @@ export const useCreateSurvey = () => {
           created_by: user.id,
           title: surveyData.title,
           description: surveyData.description || null,
-          supported_languages: surveyData.supported_languages || ['en', 'es'],
+          supported_languages: surveyData.supported_languages || ['en'],
           share_token: shareToken,
           is_active: true,
           settings: {}

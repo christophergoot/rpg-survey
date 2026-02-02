@@ -198,7 +198,7 @@ export interface SurveyQuestion {
 export interface QuestionTranslation {
   id: string
   question_key: string
-  language: 'en' | 'es'
+  language: string
   question_text: string
   question_description: string | null
   options: Record<string, { label: string; description: string }> | null

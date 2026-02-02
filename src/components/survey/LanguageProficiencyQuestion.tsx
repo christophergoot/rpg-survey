@@ -17,13 +17,7 @@ const PROFICIENCY_LEVELS = [
   { value: 5, labelKey: 'survey.languageProficiency.level5' }
 ]
 
-const LANGUAGE_NAMES: Record<string, { en: string; es: string }> = {
-  en: { en: 'English', es: 'Inglés' },
-  es: { en: 'Spanish', es: 'Español' },
-  fr: { en: 'French', es: 'Francés' },
-  de: { en: 'German', es: 'Alemán' },
-  pt: { en: 'Portuguese', es: 'Portugués' }
-}
+// Language names are now fetched from translations using results.values.language.{code}
 
 export const LanguageProficiencyQuestion: React.FC<LanguageProficiencyQuestionProps> = ({
   languages,
@@ -31,8 +25,7 @@ export const LanguageProficiencyQuestion: React.FC<LanguageProficiencyQuestionPr
   onChange,
   showValidation
 }) => {
-  const { t, i18n } = useTranslation()
-  const currentLang = i18n.language as 'en' | 'es'
+  const { t } = useTranslation()
 
   const handleChange = (language: string, proficiency: number) => {
     onChange({
@@ -42,7 +35,7 @@ export const LanguageProficiencyQuestion: React.FC<LanguageProficiencyQuestionPr
   }
 
   const getLanguageName = (langCode: string): string => {
-    return LANGUAGE_NAMES[langCode]?.[currentLang] || langCode.toUpperCase()
+    return t(`results.values.language.${langCode}`)
   }
 
   const allLanguagesAnswered = languages.every((lang) => value[lang] !== undefined)
