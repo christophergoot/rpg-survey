@@ -76,6 +76,12 @@ export const SurveyCompletion: React.FC = () => {
   }
 
   const handleNext = () => {
+    // Validate player name on the first screen
+    if (currentQuestionIndex === 0 && !playerName.trim()) {
+      setShowValidation(true)
+      return
+    }
+
     if (!isCurrentQuestionAnswered()) {
       setShowValidation(true)
       return
@@ -240,14 +246,29 @@ export const SurveyCompletion: React.FC = () => {
               <input
                 type="text"
                 value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
+                onChange={(e) => {
+                  setPlayerName(e.target.value)
+                  if (showValidation && e.target.value.trim()) {
+                    setShowValidation(false)
+                  }
+                }}
                 placeholder={t('survey.complete.playerNamePlaceholder')}
                 required
-                className="w-full px-4 py-3 bg-dark-bg border-2 border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
+                className={`w-full px-4 py-3 bg-dark-bg border-2 rounded-lg focus:outline-none text-white placeholder-gray-500 ${
+                  showValidation && !playerName.trim()
+                    ? 'border-red-500 focus:border-red-500'
+                    : 'border-dark-elevated focus:border-cyber-500'
+                }`}
               />
-              <p className="mt-2 text-sm text-gray-500">
-                {t('survey.complete.nameRequiredHelp')}
-              </p>
+              {showValidation && !playerName.trim() ? (
+                <p className="mt-2 text-sm text-red-400">
+                  {t('survey.complete.nameRequired')}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm text-gray-500">
+                  {t('survey.complete.nameRequiredHelp')}
+                </p>
+              )}
             </div>
           )}
 

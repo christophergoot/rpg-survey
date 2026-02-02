@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLanguageStore } from '../../stores/languageStore'
 
@@ -10,22 +10,39 @@ type SupportedLanguage = 'en' | 'es' | 'fr' | 'de' | 'nl' | 'it' | 'pt'
 
 const LANGUAGES: { code: SupportedLanguage; flag: string; name: string; region: string }[] = [
   { code: 'en', flag: '🇺🇸', name: 'English', region: 'United States' },
-  { code: 'es', flag: '🇪🇸', name: 'Espanol', region: 'Espana' },
-  { code: 'fr', flag: '🇫🇷', name: 'Francais', region: 'France' },
+  { code: 'es', flag: '🇪🇸', name: 'Español', region: 'España' },
+  { code: 'fr', flag: '🇫🇷', name: 'Français', region: 'France' },
   { code: 'de', flag: '🇩🇪', name: 'Deutsch', region: 'Deutschland' },
   { code: 'nl', flag: '🇳🇱', name: 'Nederlands', region: 'Nederland' },
   { code: 'it', flag: '🇮🇹', name: 'Italiano', region: 'Italia' },
-  { code: 'pt', flag: '🇧🇷', name: 'Portugues', region: 'Brasil' }
+  { code: 'pt', flag: '🇧🇷', name: 'Português', region: 'Brasil' }
 ]
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'compact' }) => {
   const { i18n } = useTranslation()
   const { language, setLanguage } = useLanguageStore()
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
 
   const handleLanguageChange = (newLang: SupportedLanguage) => {
     setLanguage(newLang)
     i18n.changeLanguage(newLang)
+    setIsOpen(false)
   }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0]
 
   if (variant === 'full') {
     return (
@@ -51,21 +68,43 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'c
     )
   }
 
+  // Compact dropdown version
   return (
-    <div className="flex items-center gap-1 bg-dark-bg rounded-lg p-1 border border-dark-elevated">
-      {LANGUAGES.map((lang) => (
-        <button
-          key={lang.code}
-          onClick={() => handleLanguageChange(lang.code)}
-          className={`px-2 py-1.5 rounded-md transition-all text-sm font-medium ${
-            language === lang.code
-              ? 'bg-cyber-500 text-white shadow-sm'
-              : 'hover:bg-dark-elevated text-gray-400 hover:text-white'
-          }`}
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-2 bg-dark-bg rounded-lg border border-dark-elevated hover:border-cyber-500/50 transition-colors"
+      >
+        <span className="text-lg">{currentLang.flag}</span>
+        <span className="text-sm font-medium text-white">{currentLang.code.toUpperCase()}</span>
+        <svg
+          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          {lang.flag} {lang.code.toUpperCase()}
-        </button>
-      ))}
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-dark-surface rounded-lg border border-dark-elevated shadow-xl z-50">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => handleLanguageChange(lang.code)}
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                language === lang.code
+                  ? 'bg-cyber-500/20 text-cyber-400'
+                  : 'hover:bg-dark-elevated text-white'
+              }`}
+            >
+              <span className="text-lg">{lang.flag}</span>
+              <span className="font-medium">{lang.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
