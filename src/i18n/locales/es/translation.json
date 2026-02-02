@@ -198,7 +198,7 @@
         "splitBetweenOptions": "El grupo está dividido entre opciones",
         "differentComfortLevels": "Los jugadores tienen diferentes niveles de comodidad"
       },
-      "correlations": {
+      "correlationDescriptions": {
         "experienceVsComplexity": "Nivel de Experiencia vs Complejidad de Reglas",
         "experienceVsCombat": "Nivel de Experiencia vs Interés en Combate",
         "complexityVsCombat": "Complejidad de Reglas vs Interés en Combate",

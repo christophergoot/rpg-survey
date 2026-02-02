@@ -198,7 +198,7 @@
         "splitBetweenOptions": "Group is split between options",
         "differentComfortLevels": "Players have different comfort levels"
       },
-      "correlations": {
+      "correlationDescriptions": {
         "experienceVsComplexity": "Experience Level vs Rules Complexity",
         "experienceVsCombat": "Experience Level vs Combat Interest",
         "complexityVsCombat": "Rules Complexity vs Combat Interest",

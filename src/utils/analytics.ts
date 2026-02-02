@@ -439,27 +439,27 @@ const calculateCorrelations = (responses: SurveyResponse[]): Correlation[] => {
     {
       f1: 'experience',
       f2: 'rules_complexity',
-      descKey: 'results.insights.correlations.experienceVsComplexity'
+      descKey: 'results.insights.correlationDescriptions.experienceVsComplexity'
     },
     {
       f1: 'experience',
       f2: 'combat',
-      descKey: 'results.insights.correlations.experienceVsCombat'
+      descKey: 'results.insights.correlationDescriptions.experienceVsCombat'
     },
     {
       f1: 'rules_complexity',
       f2: 'combat',
-      descKey: 'results.insights.correlations.complexityVsCombat'
+      descKey: 'results.insights.correlationDescriptions.complexityVsCombat'
     },
     {
       f1: 'combat',
       f2: 'exploration',
-      descKey: 'results.insights.correlations.combatVsExploration'
+      descKey: 'results.insights.correlationDescriptions.combatVsExploration'
     },
     {
       f1: 'puzzles',
       f2: 'diplomacy',
-      descKey: 'results.insights.correlations.puzzlesVsDiplomacy'
+      descKey: 'results.insights.correlationDescriptions.puzzlesVsDiplomacy'
     }
   ]
 
