@@ -569,6 +569,30 @@ const GAME_SYSTEMS: GameSystem[] = [
     strengths: ['exploration', 'diplomacy']
   },
   {
+    name: 'Worlds Without Number',
+    description: 'Old-school fantasy with sandbox tools and faction rules',
+    themes: ['fantasy'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid', 'tactical'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Cities Without Number',
+    description: 'Cyberpunk sandbox with Crawford\'s faction and world-building tools',
+    themes: ['cyberpunk'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid', 'tactical'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Ashes Without Number',
+    description: 'Post-apocalyptic survival with zombies and faction play',
+    themes: ['postapoc', 'horror'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid', 'tactical'],
+    strengths: ['exploration', 'combat']
+  },
+  {
     name: 'Mothership',
     description: 'Sci-fi horror with simple rules and high tension',
     themes: ['scifi', 'horror'],
@@ -719,6 +743,391 @@ const GAME_SYSTEMS: GameSystem[] = [
     complexity: [2, 2],
     combatStyle: ['tactical', 'hybrid'],
     strengths: ['combat', 'exploration']
+  },
+  // === Added from RPGGeek Top 100 ===
+  {
+    name: 'Fiasco',
+    description: 'GM-less game of powerful ambition and poor impulse control',
+    themes: ['modern', 'historical'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy']
+  },
+  {
+    name: 'Pendragon',
+    description: 'Arthurian romance with generational play and passions',
+    themes: ['fantasy', 'historical'],
+    complexity: [3, 4],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'diplomacy']
+  },
+  {
+    name: 'Delta Green',
+    description: 'Modern Lovecraftian horror with conspiracy and investigation',
+    themes: ['horror', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Legend of the Five Rings',
+    description: 'Samurai drama in a fantastical Asia-inspired setting',
+    themes: ['fantasy', 'historical'],
+    complexity: [3, 4],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'diplomacy']
+  },
+  {
+    name: 'The One Ring',
+    description: 'Middle-earth adventures faithful to Tolkien\'s vision',
+    themes: ['fantasy'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Trail of Cthulhu',
+    description: 'Investigative horror using the GUMSHOE system',
+    themes: ['horror', 'historical'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'RuneQuest',
+    description: 'Bronze age fantasy with detailed mythology and cults',
+    themes: ['fantasy'],
+    complexity: [3, 4],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Forbidden Lands',
+    description: 'Survival hex-crawl fantasy in a dark, cursed world',
+    themes: ['fantasy'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Warhammer Fantasy Roleplay',
+    description: 'Grim and perilous adventures in the Old World',
+    themes: ['fantasy', 'horror'],
+    complexity: [3, 4],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Star Wars FFG',
+    description: 'Narrative dice system in the Star Wars galaxy',
+    themes: ['scifi'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Dungeon Crawl Classics',
+    description: 'Gonzo old-school fantasy with wild magic',
+    themes: ['fantasy'],
+    complexity: [2, 3],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Night\'s Black Agents',
+    description: 'Spy thriller meets vampire conspiracy',
+    themes: ['horror', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['puzzles', 'combat']
+  },
+  {
+    name: 'Mutant: Year Zero',
+    description: 'Post-apocalyptic survival with zone exploration',
+    themes: ['postapoc'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Mouse Guard',
+    description: 'Heroic mice defending their territories',
+    themes: ['fantasy'],
+    complexity: [2, 2],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Paranoia',
+    description: 'Darkly comedic dystopia run by an insane computer',
+    themes: ['scifi'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Masks: A New Generation',
+    description: 'Teen superhero drama using Powered by the Apocalypse',
+    themes: ['modern'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['combat', 'diplomacy']
+  },
+  {
+    name: 'Vaesen',
+    description: 'Nordic horror investigating mythological creatures',
+    themes: ['horror', 'historical'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Monsterhearts',
+    description: 'Messy lives of teenage monsters',
+    themes: ['horror', 'modern'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy']
+  },
+  {
+    name: 'Monster of the Week',
+    description: 'Hunt monsters like Buffy or Supernatural',
+    themes: ['horror', 'modern'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Eclipse Phase',
+    description: 'Transhuman conspiracy and horror in the far future',
+    themes: ['scifi', 'horror'],
+    complexity: [4, 5],
+    combatStyle: ['tactical'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Star Trek Adventures',
+    description: 'Boldly go with the official Star Trek RPG',
+    themes: ['scifi'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Burning Wheel',
+    description: 'Character-driven fantasy with deep belief mechanics',
+    themes: ['fantasy'],
+    complexity: [4, 5],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Tales from the Loop',
+    description: '80s kids investigating sci-fi mysteries',
+    themes: ['scifi', 'modern'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Ironsworn',
+    description: 'Solo/co-op viking fantasy with oracle tables',
+    themes: ['fantasy'],
+    complexity: [2, 2],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: '7th Sea',
+    description: 'Swashbuckling adventure in a fantasy Europe',
+    themes: ['fantasy', 'historical'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['combat', 'diplomacy']
+  },
+  {
+    name: 'Vampire: The Masquerade',
+    description: 'Personal and political horror as modern vampires',
+    themes: ['horror', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Shadowrun',
+    description: 'Cyberpunk meets fantasy with magic and megacorps',
+    themes: ['cyberpunk', 'fantasy'],
+    complexity: [4, 5],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Symbaroum',
+    description: 'Dark fantasy exploring a corrupted forest',
+    themes: ['fantasy', 'horror'],
+    complexity: [2, 3],
+    combatStyle: ['hybrid'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Urban Shadows',
+    description: 'Political urban fantasy with supernatural factions',
+    themes: ['fantasy', 'modern', 'horror'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Thousand Year Old Vampire',
+    description: 'Solo journaling as an immortal monster',
+    themes: ['horror', 'historical'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['exploration']
+  },
+  {
+    name: 'Microscope',
+    description: 'Collaborative worldbuilding across eons',
+    themes: ['scifi', 'fantasy', 'historical'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy']
+  },
+  {
+    name: 'The Quiet Year',
+    description: 'Map-drawing game about community survival',
+    themes: ['postapoc'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'exploration']
+  },
+  {
+    name: 'Lady Blackbird',
+    description: 'Free steampunk adventure ready to play',
+    themes: ['scifi', 'fantasy'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'diplomacy']
+  },
+  {
+    name: 'Dogs in the Vineyard',
+    description: 'Frontier religious enforcers facing moral dilemmas',
+    themes: ['historical'],
+    complexity: [2, 2],
+    combatStyle: ['narrative'],
+    strengths: ['diplomacy', 'puzzles']
+  },
+  {
+    name: 'Ars Magica',
+    description: 'Medieval wizards in detailed covenant play',
+    themes: ['fantasy', 'historical'],
+    complexity: [4, 5],
+    combatStyle: ['tactical'],
+    strengths: ['puzzles', 'diplomacy']
+  },
+  {
+    name: 'Unknown Armies',
+    description: 'Postmodern horror with obsession-fueled magic',
+    themes: ['horror', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'diplomacy']
+  },
+  {
+    name: 'The Dresden Files RPG',
+    description: 'Urban fantasy based on Jim Butcher\'s novels',
+    themes: ['fantasy', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Deadlands',
+    description: 'Weird West with horror and steampunk elements',
+    themes: ['horror', 'historical'],
+    complexity: [2, 3],
+    combatStyle: ['tactical', 'hybrid'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Dark Heresy',
+    description: 'Warhammer 40K investigation and heresy hunting',
+    themes: ['scifi', 'horror'],
+    complexity: [3, 4],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'puzzles']
+  },
+  {
+    name: 'Rogue Trader',
+    description: 'Warhammer 40K exploration and trade',
+    themes: ['scifi'],
+    complexity: [3, 4],
+    combatStyle: ['tactical'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Basic Fantasy RPG',
+    description: 'Free old-school fantasy with modern sensibilities',
+    themes: ['fantasy'],
+    complexity: [1, 2],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Swords & Wizardry',
+    description: 'OD&D retroclone for classic dungeon crawling',
+    themes: ['fantasy'],
+    complexity: [1, 2],
+    combatStyle: ['tactical'],
+    strengths: ['combat', 'exploration']
+  },
+  {
+    name: 'Mage: The Ascension',
+    description: 'Reality-bending magic in the World of Darkness',
+    themes: ['modern', 'fantasy'],
+    complexity: [3, 4],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'diplomacy']
+  },
+  {
+    name: 'Kult',
+    description: 'Extreme horror exploring hidden reality',
+    themes: ['horror', 'modern'],
+    complexity: [2, 3],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Brindlewood Bay',
+    description: 'Cozy mystery with elderly sleuths and dark secrets',
+    themes: ['modern', 'horror'],
+    complexity: [1, 2],
+    combatStyle: ['narrative'],
+    strengths: ['puzzles', 'diplomacy']
+  },
+  {
+    name: 'Blade Runner RPG',
+    description: 'Noir investigation in the Blade Runner universe',
+    themes: ['scifi', 'cyberpunk'],
+    complexity: [2, 3],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['puzzles', 'exploration']
+  },
+  {
+    name: 'Cairn',
+    description: 'Rules-light fantasy adventure inspired by Into the Odd',
+    themes: ['fantasy'],
+    complexity: [1, 1],
+    combatStyle: ['narrative'],
+    strengths: ['exploration', 'combat']
+  },
+  {
+    name: 'Wasteland Degenerates',
+    description: 'Gonzo post-apocalyptic survival and scavenging',
+    themes: ['postapoc'],
+    complexity: [1, 2],
+    combatStyle: ['narrative', 'hybrid'],
+    strengths: ['exploration', 'combat']
   }
 ]
 
