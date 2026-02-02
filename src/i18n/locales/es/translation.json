@@ -104,7 +104,8 @@
       "error": "Error al enviar la encuesta",
       "required": "Esta pregunta es obligatoria",
       "surveyNotFound": "Encuesta no encontrada",
-      "surveyInactive": "Esta encuesta ya no está activa"
+      "surveyInactive": "Esta encuesta ya no está activa",
+      "viewResults": "Ver Resultados del Grupo"
     },
     "languageProficiency": {
       "title": "Competencia Lingüística",
@@ -132,6 +133,11 @@
     "submittedAnonymously": "Enviado anónimamente",
     "submittedAt": "Enviado {{date}}",
     "totalResponses": "Total de Respuestas: {{count}}",
+    "groupSummary": "Resumen de Preferencias del Grupo",
+    "playerNote": "Este resumen muestra las preferencias agregadas de todos los jugadores. Los nombres individuales se mantienen privados.",
+    "shareSurvey": "Compartir Encuesta",
+    "shareResults": "Compartir Resultados",
+    "linkCopied": "¡Enlace de resultados copiado!",
     "charts": {
       "themeDistribution": "Preferencias de Tema",
       "activityPreferences": "Preferencias de Actividad",

@@ -23,6 +23,44 @@ export const useSurveyResponses = (surveyId: string) => {
 }
 
 /**
+ * Fetch responses for a survey by share token (public, for player results)
+ * Returns responses without player names for privacy
+ */
+export const useSurveyResponsesByToken = (shareToken: string) => {
+  return useQuery({
+    queryKey: ['survey-responses-public', shareToken],
+    queryFn: async () => {
+      // First get the survey ID from the share token
+      const { data: survey, error: surveyError } = await supabase
+        .from('surveys')
+        .select('id')
+        .eq('share_token', shareToken)
+        .single()
+
+      if (surveyError) throw surveyError
+
+      // Then get responses (without player names for privacy)
+      const { data, error } = await supabase
+        .from('survey_responses')
+        .select('id, survey_id, submitted_at, language, answers')
+        .eq('survey_id', survey.id)
+        .order('submitted_at', { ascending: false })
+
+      if (error) throw error
+
+      // Return responses without player_name for privacy
+      return data.map(r => ({
+        ...r,
+        player_name: null,
+        user_agent: null,
+        ip_hash: null
+      })) as SurveyResponse[]
+    },
+    enabled: !!shareToken
+  })
+}
+
+/**
  * Notify GM via Edge Function (fire-and-forget)
  */
 const notifyGM = async (surveyId: string, playerName: string, responseId: string) => {

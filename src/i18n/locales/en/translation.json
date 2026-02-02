@@ -104,7 +104,8 @@
       "error": "Failed to submit survey",
       "required": "This question is required",
       "surveyNotFound": "Survey not found",
-      "surveyInactive": "This survey is no longer active"
+      "surveyInactive": "This survey is no longer active",
+      "viewResults": "View Group Results"
     },
     "languageProficiency": {
       "title": "Language Proficiency",
@@ -132,6 +133,11 @@
     "submittedAnonymously": "Submitted anonymously",
     "submittedAt": "Submitted {{date}}",
     "totalResponses": "Total Responses: {{count}}",
+    "groupSummary": "Group Preferences Summary",
+    "playerNote": "This summary shows aggregated preferences from all players. Individual names are kept private.",
+    "shareSurvey": "Share Survey",
+    "shareResults": "Share Results",
+    "linkCopied": "Results link copied to clipboard!",
     "charts": {
       "themeDistribution": "Theme Preferences",
       "activityPreferences": "Activity Preferences",

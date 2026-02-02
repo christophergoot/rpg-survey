@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useSurveyByToken } from '../hooks/useSurvey'
 import { useQuestionsWithTranslations } from '../hooks/useQuestions'
@@ -193,12 +193,19 @@ export const SurveyCompletion: React.FC = () => {
           <p className="text-lg text-gray-300 mb-6">
             {t('survey.complete.submittedMessage')}
           </p>
-          <div className="p-4 bg-cyber-500/10 border border-cyber-500/30 rounded-lg">
+          <div className="p-4 bg-cyber-500/10 border border-cyber-500/30 rounded-lg mb-6">
             <p className="text-gray-400">
               Your responses will help the Game Master create an amazing campaign tailored
               to your group's preferences.
             </p>
           </div>
+          <Link
+            to={`/surveys/${shareToken}/results`}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-cyber-500 hover:bg-cyber-600 text-white font-semibold rounded-lg transition-colors shadow-lg shadow-cyber-500/30"
+          >
+            <span className="text-xl">📊</span>
+            {t('survey.complete.viewResults')}
+          </Link>
         </div>
       </div>
     )

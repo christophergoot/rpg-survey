@@ -5,6 +5,7 @@ import { Login } from './pages/Login'
 import { GMDashboard } from './pages/GMDashboard'
 import { SurveyCreation } from './pages/SurveyCreation'
 import { SurveyCompletion } from './pages/SurveyCompletion'
+import { PlayerResults } from './pages/PlayerResults'
 import { ResultsDashboard } from './pages/ResultsDashboard'
 import { ProtectedRoute } from './components/common/ProtectedRoute'
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/surveys/:shareToken" element={<SurveyCompletion />} />
+        <Route path="/surveys/:shareToken/results" element={<PlayerResults />} />
 
         {/* Protected Routes (GM only) */}
         <Route
