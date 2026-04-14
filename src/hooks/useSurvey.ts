@@ -1,160 +1,104 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
-import type { Survey } from '../lib/types'
-import { generateShareToken } from '../utils/shareTokenGenerator'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../lib/api";
+import type { Survey } from "../lib/types";
+import { generateShareToken } from "../utils/shareTokenGenerator";
 
 /**
  * Fetch all surveys for the current GM
  */
 export const useGMSurveys = () => {
   return useQuery({
-    queryKey: ['gm-surveys'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('surveys')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      return data as Survey[]
-    }
-  })
-}
+    queryKey: ["gm-surveys"],
+    queryFn: () => api.surveys.list(),
+  });
+};
 
 /**
- * Fetch a single survey by share token
+ * Fetch a single survey by share token (public, no auth)
  */
 export const useSurveyByToken = (shareToken: string) => {
   return useQuery({
-    queryKey: ['survey', shareToken],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('surveys')
-        .select('*')
-        .eq('share_token', shareToken)
-        .eq('is_active', true)
-        .single()
-
-      if (error) throw error
-      return data as Survey
-    },
-    enabled: !!shareToken
-  })
-}
+    queryKey: ["survey", shareToken],
+    queryFn: () => api.surveys.getByToken(shareToken),
+    enabled: !!shareToken,
+  });
+};
 
 /**
  * Fetch a single survey by ID (for GMs)
  */
 export const useSurveyById = (surveyId: string) => {
   return useQuery({
-    queryKey: ['survey', surveyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('surveys')
-        .select('*')
-        .eq('id', surveyId)
-        .single()
-
-      if (error) throw error
-      return data as Survey
-    },
-    enabled: !!surveyId
-  })
-}
+    queryKey: ["survey", surveyId],
+    queryFn: () => api.surveys.getById(surveyId),
+    enabled: !!surveyId,
+  });
+};
 
 /**
  * Create a new survey
  */
 export const useCreateSurvey = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (surveyData: {
-      title: string
-      description?: string
-      supported_languages?: string[]
+      title: string;
+      description?: string;
+      supported_languages?: string[];
     }) => {
-      const {
-        data: { user }
-      } = await supabase.auth.getUser()
-
-      if (!user) throw new Error('Not authenticated')
-
-      const shareToken = generateShareToken()
-
-      const { data, error } = await supabase
-        .from('surveys')
-        .insert([{
-          created_by: user.id,
-          title: surveyData.title,
-          description: surveyData.description || null,
-          supported_languages: surveyData.supported_languages || ['en'],
-          share_token: shareToken,
-          is_active: true,
-          settings: {}
-        }])
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as Survey
+      const share_token = generateShareToken();
+      return api.surveys.create({
+        title: surveyData.title,
+        description: surveyData.description,
+        supported_languages: surveyData.supported_languages ?? ["en"],
+        share_token,
+      }) as Promise<Survey>;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['gm-surveys'] })
-    }
-  })
-}
+      queryClient.invalidateQueries({ queryKey: ["gm-surveys"] });
+    },
+  });
+};
 
 /**
  * Update a survey
  */
 export const useUpdateSurvey = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       surveyId,
-      updates
+      updates,
     }: {
-      surveyId: string
+      surveyId: string;
       updates: {
-        title?: string
-        description?: string | null
-        is_active?: boolean
-        supported_languages?: string[]
-      }
-    }) => {
-      const { data, error } = await supabase
-        .from('surveys')
-        .update(updates)
-        .eq('id', surveyId)
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as Survey
-    },
+        title?: string;
+        description?: string | null;
+        is_active?: boolean;
+        supported_languages?: string[];
+      };
+    }) => api.surveys.update(surveyId, updates),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['gm-surveys'] })
-      queryClient.invalidateQueries({ queryKey: ['survey', variables.surveyId] })
-    }
-  })
-}
+      queryClient.invalidateQueries({ queryKey: ["gm-surveys"] });
+      queryClient.invalidateQueries({
+        queryKey: ["survey", variables.surveyId],
+      });
+    },
+  });
+};
 
 /**
  * Delete a survey
  */
 export const useDeleteSurvey = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (surveyId: string) => {
-      const { error } = await supabase.from('surveys').delete().eq('id', surveyId)
-
-      if (error) throw error
-    },
+    mutationFn: (surveyId: string) => api.surveys.delete(surveyId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['gm-surveys'] })
-    }
-  })
-}
+      queryClient.invalidateQueries({ queryKey: ["gm-surveys"] });
+    },
+  });
+};

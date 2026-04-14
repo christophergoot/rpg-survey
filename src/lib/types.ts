@@ -1,316 +1,169 @@
-// Database Types
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
+// Application Types
 
-export interface Database {
-  public: {
-    Tables: {
-      gm_profiles: {
-        Row: {
-          id: string
-          email: string | null
-          display_name: string | null
-          created_at: string
-        }
-        Insert: {
-          id: string
-          email?: string | null
-          display_name?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          email?: string | null
-          display_name?: string | null
-          created_at?: string
-        }
-      }
-      surveys: {
-        Row: {
-          id: string
-          created_at: string
-          updated_at: string
-          created_by: string
-          title: string
-          description: string | null
-          supported_languages: string[]
-          is_active: boolean
-          share_token: string
-          settings: Json
-        }
-        Insert: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          created_by: string
-          title: string
-          description?: string | null
-          supported_languages?: string[]
-          is_active?: boolean
-          share_token: string
-          settings?: Json
-        }
-        Update: {
-          id?: string
-          created_at?: string
-          updated_at?: string
-          created_by?: string
-          title?: string
-          description?: string | null
-          supported_languages?: string[]
-          is_active?: boolean
-          share_token?: string
-          settings?: Json
-        }
-      }
-      survey_questions: {
-        Row: {
-          id: string
-          question_key: string
-          question_type: string
-          order_index: number
-          is_required: boolean
-          config: Json
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          question_key: string
-          question_type: string
-          order_index: number
-          is_required?: boolean
-          config?: Json
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          question_key?: string
-          question_type?: string
-          order_index?: number
-          is_required?: boolean
-          config?: Json
-          created_at?: string
-        }
-      }
-      question_translations: {
-        Row: {
-          id: string
-          question_key: string
-          language: string
-          question_text: string
-          question_description: string | null
-          options: Json | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          question_key: string
-          language: string
-          question_text: string
-          question_description?: string | null
-          options?: Json | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          question_key?: string
-          language?: string
-          question_text?: string
-          question_description?: string | null
-          options?: Json | null
-          created_at?: string
-        }
-      }
-      survey_responses: {
-        Row: {
-          id: string
-          survey_id: string
-          submitted_at: string
-          player_name: string | null
-          language: string
-          answers: Json
-          user_agent: string | null
-          ip_hash: string | null
-        }
-        Insert: {
-          id?: string
-          survey_id: string
-          submitted_at?: string
-          player_name?: string | null
-          language: string
-          answers: Json
-          user_agent?: string | null
-          ip_hash?: string | null
-        }
-        Update: {
-          id?: string
-          survey_id?: string
-          submitted_at?: string
-          player_name?: string | null
-          language?: string
-          answers?: Json
-          user_agent?: string | null
-          ip_hash?: string | null
-        }
-      }
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-  }
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export interface User {
+  id: string;
+  email: string;
+  display_name: string;
 }
 
-// Application Types
 export interface Survey {
-  id: string
-  created_at: string
-  updated_at: string
-  created_by: string
-  title: string
-  description: string | null
-  supported_languages: string[]
-  is_active: boolean
-  share_token: string
-  settings: Record<string, any>
+  id: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  title: string;
+  description: string | null;
+  supported_languages: string[];
+  is_active: boolean;
+  share_token: string;
+  settings: Record<string, unknown>;
 }
 
 export interface SurveyQuestion {
-  id: string
-  question_key: string
-  question_type: 'single_choice' | 'multi_choice' | 'scale' | 'text' | 'multi_scale'
-  order_index: number
-  is_required: boolean
+  id: string;
+  question_key: string;
+  question_type:
+    | "single_choice"
+    | "multi_choice"
+    | "scale"
+    | "text"
+    | "multi_scale";
+  order_index: number;
+  is_required: boolean;
   config: {
-    options?: string[]
-    scales?: string[]
-    min?: number
-    max?: number
-    maxLength?: number
-  }
-  created_at: string
+    options?: string[];
+    scales?: string[];
+    min?: number;
+    max?: number;
+    maxLength?: number;
+  };
+  created_at: string;
 }
 
 export interface QuestionTranslation {
-  id: string
-  question_key: string
-  language: string
-  question_text: string
-  question_description: string | null
-  options: Record<string, { label: string; description: string }> | null
-  created_at: string
+  id: string;
+  question_key: string;
+  language: string;
+  question_text: string;
+  question_description: string | null;
+  options: Record<string, { label: string; description: string }> | null;
+  created_at: string;
 }
 
 export interface SurveyResponse {
-  id: string
-  survey_id: string
-  submitted_at: string
-  player_name: string | null
-  language: string
-  answers: Record<string, any>
-  user_agent: string | null
-  ip_hash: string | null
+  id: string;
+  survey_id: string;
+  submitted_at: string;
+  player_name: string | null;
+  language: string;
+  answers: Record<string, unknown>;
+  user_agent: string | null;
+  ip_hash: string | null;
 }
 
 export interface GMProfile {
-  id: string
-  email: string | null
-  display_name: string | null
-  created_at: string
+  id: string;
+  email: string;
+  display_name: string | null;
+  created_at: string;
 }
 
 // Survey Answer Types
 export interface SurveyAnswers {
-  language_proficiency?: Record<string, number> // e.g., { "en": 5, "es": 3 }
-  theme?: string[]
-  setting_details?: string
+  language_proficiency?: Record<string, number>;
+  theme?: string[];
+  setting_details?: string;
   activity_preferences?: {
-    combat: number
-    puzzles: number
-    diplomacy: number
-    exploration: number
-  }
-  rules_complexity?: number
-  combat_style?: string
-  campaign_length?: string
-  session_frequency?: string
-  experience_level?: number
-  character_creation?: string
-  tone_preferences?: string[]
-  content_boundaries?: string[]
-  additional_comments?: string
+    combat: number;
+    puzzles: number;
+    diplomacy: number;
+    exploration: number;
+  };
+  rules_complexity?: number;
+  combat_style?: string;
+  campaign_length?: string;
+  session_frequency?: string;
+  experience_level?: number;
+  character_creation?: string;
+  tone_preferences?: string[];
+  content_boundaries?: string[];
+  additional_comments?: string;
 }
 
 // Summary Statistics Types
 export interface SurveySummary {
-  totalResponses: number
-  themeCounts: Record<string, number>
-  avgRulesComplexity: number
+  totalResponses: number;
+  themeCounts: Record<string, number>;
+  avgRulesComplexity: number;
   avgActivityPreferences: {
-    combat: number
-    puzzles: number
-    diplomacy: number
-    exploration: number
-  }
-  combatStyleCounts: Record<string, number>
-  campaignLengthCounts: Record<string, number>
-  avgExperienceLevel: number
-  tonePreferencesCounts: Record<string, number>
-  languageDistribution: Record<string, number>
-  avgLanguageProficiency: Record<string, number> // e.g., { "en": 4.2, "es": 2.8 }
+    combat: number;
+    puzzles: number;
+    diplomacy: number;
+    exploration: number;
+  };
+  combatStyleCounts: Record<string, number>;
+  campaignLengthCounts: Record<string, number>;
+  avgExperienceLevel: number;
+  tonePreferencesCounts: Record<string, number>;
+  languageDistribution: Record<string, number>;
+  avgLanguageProficiency: Record<string, number>;
 }
 
 // Advanced Analytics Types
 export interface Correlation {
-  field1: string
-  field2: string
-  coefficient: number
-  descriptionKey: string // Translation key for correlation description
+  field1: string;
+  field2: string;
+  coefficient: number;
+  descriptionKey: string;
 }
 
 export interface ConsensusItem {
-  fieldKey: string // Key for translation (e.g., 'combat_style')
-  valueKey: string // Key for translation (e.g., 'tactical')
-  percentage: number
-  count: number
-  total: number
+  fieldKey: string;
+  valueKey: string;
+  percentage: number;
+  count: number;
+  total: number;
 }
 
 export interface ConflictItem {
-  fieldKey: string // Key for translation
-  descriptionKey: string // Translation key
-  descriptionParams?: Record<string, string | number> // Parameters for interpolation
-  values: { valueKey: string; count: number }[]
-  variance?: number
+  fieldKey: string;
+  descriptionKey: string;
+  descriptionParams?: Record<string, string | number>;
+  values: { valueKey: string; count: number }[];
+  variance?: number;
 }
 
 export interface MatchReason {
-  key: string // Translation key
-  params?: Record<string, string> // Parameters for interpolation
+  key: string;
+  params?: Record<string, string>;
 }
 
 export interface GameSystemRecommendation {
-  name: string
-  descriptionKey: string // Translation key for description
-  matchScore: number
-  matchReasons: MatchReason[]
+  name: string;
+  descriptionKey: string;
+  matchScore: number;
+  matchReasons: MatchReason[];
 }
 
 export interface SessionZeroTopic {
-  topicKey: string // Translation key
-  reasonKey: string // Translation key
-  reasonParams?: Record<string, string | number> // Parameters for interpolation
-  priority: 'high' | 'medium' | 'low'
+  topicKey: string;
+  reasonKey: string;
+  reasonParams?: Record<string, string | number>;
+  priority: "high" | "medium" | "low";
 }
 
 export interface GroupInsights {
-  consensus: ConsensusItem[]
-  conflicts: ConflictItem[]
-  correlations: Correlation[]
-  recommendations: GameSystemRecommendation[]
-  sessionZeroTopics: SessionZeroTopic[]
+  consensus: ConsensusItem[];
+  conflicts: ConflictItem[];
+  correlations: Correlation[];
+  recommendations: GameSystemRecommendation[];
+  sessionZeroTopics: SessionZeroTopic[];
 }

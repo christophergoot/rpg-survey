@@ -1,186 +1,99 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
-import type { SurveyResponse, SurveyAnswers } from '../lib/types'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../lib/api";
+import type { SurveyResponse, SurveyAnswers } from "../lib/types";
 
 /**
- * Fetch responses for a survey (GM only)
+ * Fetch responses for a survey (GM only, includes PII)
  */
 export const useSurveyResponses = (surveyId: string) => {
   return useQuery({
-    queryKey: ['survey-responses', surveyId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .select('*')
-        .eq('survey_id', surveyId)
-        .order('submitted_at', { ascending: false })
-
-      if (error) throw error
-      return data as SurveyResponse[]
-    },
-    enabled: !!surveyId
-  })
-}
+    queryKey: ["survey-responses", surveyId],
+    queryFn: () => api.responses.listForSurvey(surveyId),
+    enabled: !!surveyId,
+  });
+};
 
 /**
- * Fetch responses for a survey by share token (public, for player results)
- * Returns responses without player names for privacy
+ * Fetch responses by share token (public, PII stripped by server)
  */
 export const useSurveyResponsesByToken = (shareToken: string) => {
   return useQuery({
-    queryKey: ['survey-responses-public', shareToken],
-    queryFn: async () => {
-      // First get the survey ID from the share token
-      const { data: survey, error: surveyError } = await supabase
-        .from('surveys')
-        .select('id')
-        .eq('share_token', shareToken)
-        .single()
-
-      if (surveyError) throw surveyError
-
-      // Then get responses (without player names for privacy)
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .select('id, survey_id, submitted_at, language, answers')
-        .eq('survey_id', survey.id)
-        .order('submitted_at', { ascending: false })
-
-      if (error) throw error
-
-      // Return responses without player_name for privacy
-      return data.map(r => ({
-        ...r,
-        player_name: null,
-        user_agent: null,
-        ip_hash: null
-      })) as SurveyResponse[]
-    },
-    enabled: !!shareToken
-  })
-}
-
-/**
- * Notify GM via Edge Function (fire-and-forget)
- */
-const notifyGM = async (surveyId: string, playerName: string, responseId: string) => {
-  try {
-    await supabase.functions.invoke('notify-gm', {
-      body: { surveyId, playerName, responseId }
-    })
-  } catch (error) {
-    // Silently fail - don't block user experience if email fails
-    console.error('Failed to notify GM:', error)
-  }
-}
+    queryKey: ["survey-responses-public", shareToken],
+    queryFn: () => api.responses.listPublic(shareToken),
+    enabled: !!shareToken,
+  });
+};
 
 /**
  * Submit a survey response (anonymous)
+ * Server handles GM email notification after insert.
  */
 export const useSubmitResponse = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
       surveyId,
       playerName,
       language,
-      answers
+      answers,
     }: {
-      surveyId: string
-      playerName: string  // Now required
-      language: string
-      answers: SurveyAnswers
+      surveyId: string;
+      playerName: string;
+      language: string;
+      answers: SurveyAnswers;
     }) => {
-      // Hash IP for basic duplicate prevention (optional)
-      const userAgent = navigator.userAgent
-
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .insert([
-          {
-            survey_id: surveyId,
-            player_name: playerName,
-            language,
-            answers,
-            user_agent: userAgent,
-            ip_hash: null // Could implement IP hashing if needed
-          }
-        ])
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as SurveyResponse
+      return api.responses.submit(surveyId, {
+        player_name: playerName,
+        language,
+        answers,
+        user_agent: navigator.userAgent,
+      }) as Promise<SurveyResponse>;
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['survey-responses', variables.surveyId]
-      })
-
-      // Send email notification to GM (fire-and-forget)
-      notifyGM(variables.surveyId, variables.playerName, response.id)
-    }
-  })
-}
+        queryKey: ["survey-responses", variables.surveyId],
+      });
+    },
+  });
+};
 
 /**
  * Update player name for a response (GM only)
  */
 export const useUpdatePlayerName = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
+    mutationFn: ({
       responseId,
-      playerName
+      playerName,
     }: {
-      responseId: string
-      playerName: string
-      surveyId: string
-    }) => {
-      const { data, error } = await supabase
-        .from('survey_responses')
-        .update({ player_name: playerName })
-        .eq('id', responseId)
-        .select()
-        .single()
-
-      if (error) throw error
-      return data as SurveyResponse
-    },
+      responseId: string;
+      playerName: string;
+      surveyId: string;
+    }) => api.responses.updatePlayerName(responseId, playerName),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['survey-responses', variables.surveyId]
-      })
-    }
-  })
-}
+        queryKey: ["survey-responses", variables.surveyId],
+      });
+    },
+  });
+};
 
 /**
  * Delete a survey response (GM only)
  */
 export const useDeleteResponse = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      responseId
-    }: {
-      responseId: string
-      surveyId: string
-    }) => {
-      const { error } = await supabase
-        .from('survey_responses')
-        .delete()
-        .eq('id', responseId)
-
-      if (error) throw error
-    },
+    mutationFn: ({ responseId }: { responseId: string; surveyId: string }) =>
+      api.responses.delete(responseId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: ['survey-responses', variables.surveyId]
-      })
-    }
-  })
-}
+        queryKey: ["survey-responses", variables.surveyId],
+      });
+    },
+  });
+};

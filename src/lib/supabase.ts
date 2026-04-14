@@ -1,18 +1,6 @@
-import { createClient } from '@supabase/supabase-js'
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Missing Supabase environment variables. Please check your .env.local file.'
-  )
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
-  }
-})
+// This file has been removed as part of the Supabase → custom backend migration.
+// The API client is now at src/lib/api.ts
+// Auth helpers are now at src/lib/auth-events.ts
+throw new Error(
+  "supabase.ts has been removed — import from src/lib/api.ts instead",
+);
