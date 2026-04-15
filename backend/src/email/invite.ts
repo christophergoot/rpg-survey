@@ -35,7 +35,7 @@ export async function sendInvitationEmail(params: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "RPG Survey <notifications@resend.dev>",
+      from: "RPG Survey <onboarding@resend.dev>",
       to: invitedEmail,
       subject: `You've been invited to co-administer "${surveyTitle}"`,
       html: `
