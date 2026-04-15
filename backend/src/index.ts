@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import { corsMiddleware } from "./middleware/cors";
 import { requireAuth } from "./middleware/auth";
+import { requestLogger } from "./middleware/logger";
 import authRouter from "./routes/auth";
 import questionsRouter from "./routes/questions";
 import surveysRouter from "./routes/surveys";
@@ -14,6 +15,7 @@ const PORT = process.env.PORT ?? 3000;
 
 app.use(corsMiddleware);
 app.use(express.json());
+app.use(requestLogger);
 
 // Health check — Render uses this to verify the service is up
 app.get("/health", (_req, res) => res.json({ ok: true }));
