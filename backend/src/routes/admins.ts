@@ -33,7 +33,7 @@ router.get("/:surveyId/admins", async (req, res) => {
         [surveyId],
       ),
       pool.query(
-        `SELECT id, invited_email, created_at, expires_at
+        `SELECT id, invited_email, created_at, expires_at, token
          FROM survey_invitations
          WHERE survey_id = $1
            AND accepted_at IS NULL
@@ -130,7 +130,7 @@ router.post("/:surveyId/admins/invitations", async (req, res) => {
     const result = await pool.query(
       `INSERT INTO survey_invitations (survey_id, invited_email, token, invited_by)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, invited_email, expires_at`,
+       RETURNING id, invited_email, expires_at, token`,
       [surveyId, invitedEmail, token, req.userId],
     );
 

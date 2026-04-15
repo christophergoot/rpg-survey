@@ -5,6 +5,7 @@ import {
   useCancelInvitation,
   useRemoveAdmin,
 } from "../../hooks/useAdmins";
+import { SurveyInvitation } from "../../lib/types";
 
 interface AdminsPanelProps {
   surveyId: string;
@@ -21,6 +22,9 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [cancelingId, setCancelingId] = useState<string | null>(null);
+  const [modalInvitation, setModalInvitation] =
+    useState<SurveyInvitation | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const handleSendInvite = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +68,13 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
     } finally {
       setCancelingId(null);
     }
+  };
+
+  const handleCopyLink = async (token: string) => {
+    const url = `${window.location.origin}/#/invite/${token}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (isLoading) {
@@ -145,13 +156,21 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
                     Expires {new Date(inv.expires_at).toLocaleDateString()}
                   </p>
                 </div>
-                <button
-                  onClick={() => handleCancelInvitation(inv.id)}
-                  disabled={cancelingId === inv.id}
-                  className="px-3 py-1.5 bg-dark-elevated hover:bg-dark-bg text-gray-400 hover:text-white text-sm rounded transition-colors disabled:opacity-50"
-                >
-                  {cancelingId === inv.id ? "..." : "Cancel"}
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setModalInvitation(inv)}
+                    className="px-3 py-1.5 bg-dark-elevated hover:bg-dark-bg text-gray-300 hover:text-white text-sm rounded transition-colors"
+                  >
+                    Copy Instructions
+                  </button>
+                  <button
+                    onClick={() => handleCancelInvitation(inv.id)}
+                    disabled={cancelingId === inv.id}
+                    className="px-3 py-1.5 bg-dark-elevated hover:bg-dark-bg text-gray-400 hover:text-white text-sm rounded transition-colors disabled:opacity-50"
+                  >
+                    {cancelingId === inv.id ? "..." : "Cancel"}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -190,6 +209,57 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
           <p className="mt-2 text-sm text-green-400">Invitation sent!</p>
         )}
       </div>
+      {/* Instructions Modal */}
+      {modalInvitation && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          onClick={() => setModalInvitation(null)}
+        >
+          <div
+            className="w-full max-w-md bg-dark-card border border-dark-elevated rounded-xl p-6 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold text-white">
+              Invitation Instructions
+            </h3>
+            <p className="text-sm text-gray-400">
+              Share the following with{" "}
+              <span className="text-gray-200">
+                {modalInvitation.invited_email}
+              </span>{" "}
+              so they can accept without needing the email.
+            </p>
+            <div className="bg-dark-bg rounded-lg p-4 space-y-3 text-sm text-gray-300">
+              <p>
+                You've been invited to co-administer a survey on RPG Survey.
+              </p>
+              <p>
+                Click the link below to accept. You'll need to sign in or create
+                an account if you don't have one.
+              </p>
+              <p className="text-xs text-gray-500">
+                Expires{" "}
+                {new Date(modalInvitation.expires_at).toLocaleDateString(
+                  "en-US",
+                  { month: "long", day: "numeric", year: "numeric" },
+                )}
+              </p>
+            </div>
+            <button
+              onClick={() => handleCopyLink(modalInvitation.token)}
+              className="w-full px-4 py-2.5 bg-cyber-500 hover:bg-cyber-600 text-white font-semibold rounded-lg transition-colors"
+            >
+              {copied ? "Copied!" : "Copy Invite Link"}
+            </button>
+            <button
+              onClick={() => setModalInvitation(null)}
+              className="w-full px-4 py-2 text-gray-400 hover:text-white text-sm transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

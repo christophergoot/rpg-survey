@@ -41,6 +41,7 @@ export interface SurveyInvitation {
   invited_email: string;
   created_at: string;
   expires_at: string;
+  token: string;
 }
 
 export interface AdminsData {
