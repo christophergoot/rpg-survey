@@ -1,111 +1,97 @@
-import { useEffect, useState } from 'react'
-import { User, AuthError } from '@supabase/supabase-js'
-import { supabase } from '../lib/supabase'
+import { useEffect, useState } from "react";
+import { api } from "../lib/api";
+import {
+  getToken,
+  setToken,
+  clearToken,
+  onAuthChange,
+  dispatchAuthChange,
+} from "../lib/auth-events";
+import type { User } from "../lib/types";
 
 export interface AuthState {
-  user: User | null
-  loading: boolean
-  error: AuthError | null
+  user: User | null;
+  loading: boolean;
+  error: Error | null;
 }
 
 export const useAuth = () => {
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     loading: true,
-    error: null
-  })
+    error: null,
+  });
 
   useEffect(() => {
-    // Check active session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setAuthState({
-        user: session?.user ?? null,
-        loading: false,
-        error: null
-      })
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setAuthState({
-        user: session?.user ?? null,
-        loading: false,
-        error: null
-      })
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const signUp = async (email: string, password: string, displayName?: string) => {
-    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
-
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          display_name: displayName || email.split('@')[0]
-        }
+    const loadUser = async () => {
+      const token = getToken();
+      if (!token) {
+        setAuthState({ user: null, loading: false, error: null });
+        return;
       }
-    })
+      try {
+        const user = await api.auth.me();
+        setAuthState({ user, loading: false, error: null });
+      } catch {
+        clearToken();
+        setAuthState({ user: null, loading: false, error: null });
+      }
+    };
 
-    if (error) {
-      setAuthState((prev) => ({ ...prev, loading: false, error }))
-      return { data: null, error }
+    loadUser();
+    return onAuthChange(loadUser);
+  }, []);
+
+  const signUp = async (
+    email: string,
+    password: string,
+    displayName?: string,
+  ) => {
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }));
+    try {
+      const { token, user } = await api.auth.signUp(
+        email,
+        password,
+        displayName,
+      );
+      setToken(token);
+      setAuthState({ user, loading: false, error: null });
+      dispatchAuthChange();
+      return { data: user, error: null };
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("Sign up failed");
+      setAuthState((prev) => ({ ...prev, loading: false, error }));
+      return { data: null, error };
     }
-
-    setAuthState({
-      user: data.user,
-      loading: false,
-      error: null
-    })
-
-    return { data, error: null }
-  }
+  };
 
   const signIn = async (email: string, password: string) => {
-    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-
-    if (error) {
-      setAuthState((prev) => ({ ...prev, loading: false, error }))
-      return { data: null, error }
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }));
+    try {
+      const { token, user } = await api.auth.signIn(email, password);
+      setToken(token);
+      setAuthState({ user, loading: false, error: null });
+      dispatchAuthChange();
+      return { data: user, error: null };
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error("Sign in failed");
+      setAuthState((prev) => ({ ...prev, loading: false, error }));
+      return { data: null, error };
     }
-
-    setAuthState({
-      user: data.user,
-      loading: false,
-      error: null
-    })
-
-    return { data, error: null }
-  }
+  };
 
   const signOut = async () => {
-    setAuthState((prev) => ({ ...prev, loading: true, error: null }))
-
-    const { error } = await supabase.auth.signOut()
-
-    if (error) {
-      setAuthState((prev) => ({ ...prev, loading: false, error }))
-      return { error }
+    setAuthState((prev) => ({ ...prev, loading: true, error: null }));
+    try {
+      await api.auth.signOut();
+    } catch {
+      // Ignore server errors on sign-out; clear locally regardless
     }
-
-    setAuthState({
-      user: null,
-      loading: false,
-      error: null
-    })
-
-    return { error: null }
-  }
+    clearToken();
+    setAuthState({ user: null, loading: false, error: null });
+    dispatchAuthChange();
+    return { error: null };
+  };
 
   return {
     user: authState.user,
@@ -113,6 +99,6 @@ export const useAuth = () => {
     error: authState.error,
     signUp,
     signIn,
-    signOut
-  }
-}
+    signOut,
+  };
+};
