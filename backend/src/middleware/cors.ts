@@ -1,7 +1,9 @@
 import cors from "cors";
 
 const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN,
+  process.env.FRONTEND_ORIGIN
+    ? new URL(process.env.FRONTEND_ORIGIN).origin
+    : undefined,
   "http://localhost:5173",
   "http://localhost:4173",
 ].filter(Boolean) as string[];

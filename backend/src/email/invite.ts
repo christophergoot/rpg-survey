@@ -93,6 +93,6 @@ export async function sendInvitationEmail(params: {
 
   if (!response.ok) {
     const text = await response.text();
-    console.error("Resend error (invitation):", text);
+    throw new Error(`Resend error (invitation): ${text}`);
   }
 }
