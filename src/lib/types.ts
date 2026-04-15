@@ -25,6 +25,37 @@ export interface Survey {
   is_active: boolean;
   share_token: string;
   settings: Record<string, unknown>;
+  role?: "owner" | "co_admin";
+}
+
+export interface SurveyAdmin {
+  id: string;
+  user_id: string;
+  email: string;
+  display_name: string | null;
+  created_at: string;
+}
+
+export interface SurveyInvitation {
+  id: string;
+  invited_email: string;
+  created_at: string;
+  expires_at: string;
+}
+
+export interface AdminsData {
+  admins: SurveyAdmin[];
+  invitations: SurveyInvitation[];
+}
+
+export interface InvitationDetail {
+  id: string;
+  survey_id: string;
+  invited_email: string;
+  expires_at: string;
+  accepted_at: string | null;
+  survey_title: string;
+  inviter_display_name: string;
 }
 
 export interface SurveyQuestion {

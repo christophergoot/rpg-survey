@@ -5,6 +5,7 @@ import { requireAuth } from "./middleware/auth";
 import authRouter from "./routes/auth";
 import questionsRouter from "./routes/questions";
 import surveysRouter from "./routes/surveys";
+import adminsRouter from "./routes/admins";
 import responsesRouter from "./routes/responses";
 import publicRouter from "./routes/public";
 
@@ -23,9 +24,10 @@ app.use("/questions", questionsRouter);
 app.use("/public", publicRouter);
 
 // Protected routes (JWT required)
-// /surveys handles CRUD + GET /:id/responses
+// /surveys handles CRUD + GET /:id/responses + admin management
 // /responses handles PATCH /:id/player-name + DELETE /:id
 app.use("/surveys", requireAuth, surveysRouter);
+app.use("/surveys", requireAuth, adminsRouter);
 app.use("/responses", requireAuth, responsesRouter);
 
 app.listen(PORT, () => {

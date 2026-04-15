@@ -5,11 +5,15 @@ const router = Router();
 
 // All routes in this file require auth — applied in index.ts
 
-// GET /surveys — all surveys belonging to the authenticated GM
+// GET /surveys — all surveys for the authenticated GM (owned + co-admin)
 router.get("/", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM surveys WHERE created_by = $1 ORDER BY created_at DESC",
+      `SELECT s.*, 'owner' AS role FROM surveys s WHERE s.created_by = $1
+       UNION ALL
+       SELECT s.*, 'co_admin' AS role FROM surveys s
+       JOIN survey_admins sa ON sa.survey_id = s.id WHERE sa.user_id = $1
+       ORDER BY created_at DESC`,
       [req.userId],
     );
     res.json(result.rows);
@@ -47,11 +51,17 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET /surveys/:id — get a single survey (ownership enforced)
+// GET /surveys/:id — get a single survey (owner or co-admin)
 router.get("/:id", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT * FROM surveys WHERE id = $1 AND created_by = $2",
+      `SELECT s.*,
+              CASE WHEN s.created_by = $2 THEN 'owner' ELSE 'co_admin' END AS role
+       FROM surveys s
+       WHERE s.id = $1
+         AND (s.created_by = $2 OR EXISTS (
+           SELECT 1 FROM survey_admins sa WHERE sa.survey_id = s.id AND sa.user_id = $2
+         ))`,
       [req.params.id, req.userId],
     );
     if (result.rows.length === 0) {
@@ -117,11 +127,14 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-// GET /surveys/:id/responses — full responses with PII (GM view)
+// GET /surveys/:id/responses — full responses with PII (owner or co-admin)
 router.get("/:id/responses", async (req, res) => {
   try {
     const surveyCheck = await pool.query(
-      "SELECT id FROM surveys WHERE id = $1 AND created_by = $2",
+      `SELECT id FROM surveys WHERE id = $1
+         AND (created_by = $2 OR EXISTS (
+           SELECT 1 FROM survey_admins sa WHERE sa.survey_id = $1 AND sa.user_id = $2
+         ))`,
       [req.params.id, req.userId],
     );
     if (surveyCheck.rows.length === 0) {

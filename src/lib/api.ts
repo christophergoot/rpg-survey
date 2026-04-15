@@ -6,6 +6,9 @@ import type {
   SurveyResponse,
   User,
   SurveyAnswers,
+  AdminsData,
+  SurveyInvitation,
+  InvitationDetail,
 } from "./types";
 
 const API_BASE = import.meta.env.VITE_API_URL as string;
@@ -104,6 +107,39 @@ export const api = {
 
     translations: (language: string) =>
       apiFetch<QuestionTranslation[]>(`/questions/translations/${language}`),
+  },
+
+  admins: {
+    list: (surveyId: string) =>
+      apiFetch<AdminsData>(`/surveys/${surveyId}/admins`),
+
+    sendInvitation: (surveyId: string, email: string) =>
+      apiFetch<SurveyInvitation>(`/surveys/${surveyId}/admins/invitations`, {
+        method: "POST",
+        body: JSON.stringify({ email }),
+      }),
+
+    cancelInvitation: (surveyId: string, invitationId: string) =>
+      apiFetch<{ success: boolean }>(
+        `/surveys/${surveyId}/admins/invitations/${invitationId}`,
+        { method: "DELETE" },
+      ),
+
+    removeAdmin: (surveyId: string, adminId: string) =>
+      apiFetch<{ success: boolean }>(`/surveys/${surveyId}/admins/${adminId}`, {
+        method: "DELETE",
+      }),
+
+    acceptInvitation: (surveyId: string, token: string) =>
+      apiFetch<{ survey_id: string; survey_title: string }>(
+        `/surveys/${surveyId}/admins/invitations/${token}/accept`,
+        { method: "POST" },
+      ),
+  },
+
+  invitations: {
+    getByToken: (token: string) =>
+      apiFetch<InvitationDetail>(`/public/invitations/${token}`),
   },
 
   responses: {

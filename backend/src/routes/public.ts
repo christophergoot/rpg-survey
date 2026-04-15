@@ -4,6 +4,30 @@ import { notifyGM } from "../email/notify";
 
 const router = Router();
 
+// GET /public/invitations/:token — fetch invitation details (no auth)
+router.get("/invitations/:token", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT si.id, si.survey_id, si.invited_email, si.expires_at, si.accepted_at,
+              s.title AS survey_title,
+              gp.display_name AS inviter_display_name
+       FROM survey_invitations si
+       JOIN surveys s ON s.id = si.survey_id
+       JOIN gm_profiles gp ON gp.id = si.invited_by
+       WHERE si.token = $1`,
+      [req.params.token],
+    );
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: "Invitation not found" });
+      return;
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("public invitation error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 // GET /public/surveys/:shareToken — fetch an active survey by share token (no auth)
 router.get("/surveys/:shareToken", async (req, res) => {
   try {

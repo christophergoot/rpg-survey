@@ -1,56 +1,67 @@
-import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useUpdatePlayerName, useDeleteResponse } from '../../hooks/useResponses'
-import type { SurveyResponse, SurveyAnswers } from '../../lib/types'
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  useUpdatePlayerName,
+  useDeleteResponse,
+} from "../../hooks/useResponses";
+import type { SurveyResponse, SurveyAnswers } from "../../lib/types";
 
 interface ResponseListProps {
-  responses: SurveyResponse[]
-  surveyId: string
+  responses: SurveyResponse[];
+  surveyId: string;
+  isOwner?: boolean;
 }
 
-export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId }) => {
-  const { t } = useTranslation()
-  const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [editingId, setEditingId] = useState<string | null>(null)
-  const [editedName, setEditedName] = useState('')
-  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
+export const ResponseList: React.FC<ResponseListProps> = ({
+  responses,
+  surveyId,
+  isOwner = true,
+}) => {
+  const { t } = useTranslation();
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editedName, setEditedName] = useState("");
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
-  const updatePlayerName = useUpdatePlayerName()
-  const deleteResponse = useDeleteResponse()
+  const updatePlayerName = useUpdatePlayerName();
+  const deleteResponse = useDeleteResponse();
 
   const formatAnswer = (_key: string, value: any): string => {
-    if (value === null || value === undefined) return t('results.responses.notAnswered')
+    if (value === null || value === undefined)
+      return t("results.responses.notAnswered");
 
     if (Array.isArray(value)) {
-      return value.join(', ')
+      return value.join(", ");
     }
 
-    if (typeof value === 'object') {
+    if (typeof value === "object") {
       return Object.entries(value)
         .map(([k, v]) => `${k}: ${v}`)
-        .join(', ')
+        .join(", ");
     }
 
-    return String(value)
-  }
+    return String(value);
+  };
 
   const formatQuestionKey = (key: string): string => {
     return key
-      .split('_')
+      .split("_")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
+      .join(" ");
+  };
 
   const getLanguageName = (lang: string): string => {
-    return t(`results.values.language.${lang}`)
-  }
+    return t(`results.values.language.${lang}`);
+  };
 
   const getProficiencyLabel = (level: number): string => {
-    return t(`results.values.proficiency.level${level}`)
-  }
+    return t(`results.values.proficiency.level${level}`);
+  };
 
-  const formatLanguageProficiency = (proficiency: Record<string, number> | undefined): React.ReactNode => {
-    if (!proficiency || Object.keys(proficiency).length === 0) return null
+  const formatLanguageProficiency = (
+    proficiency: Record<string, number> | undefined,
+  ): React.ReactNode => {
+    if (!proficiency || Object.keys(proficiency).length === 0) return null;
 
     return (
       <div className="flex flex-wrap gap-2">
@@ -59,76 +70,83 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
             key={lang}
             className="flex items-center gap-1.5 px-2 py-1 bg-dark-bg rounded-md border border-dark-elevated"
           >
-            <span className="text-xs text-gray-400">{getLanguageName(lang)}:</span>
-            <span className={`text-xs font-medium ${level >= 3 ? 'text-green-400' : level >= 1 ? 'text-yellow-400' : 'text-red-400'}`}>
+            <span className="text-xs text-gray-400">
+              {getLanguageName(lang)}:
+            </span>
+            <span
+              className={`text-xs font-medium ${level >= 3 ? "text-green-400" : level >= 1 ? "text-yellow-400" : "text-red-400"}`}
+            >
               {getProficiencyLabel(level)}
             </span>
           </div>
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   const handleStartRename = (response: SurveyResponse, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setEditingId(response.id)
-    setEditedName(response.player_name || '')
-  }
+    e.stopPropagation();
+    setEditingId(response.id);
+    setEditedName(response.player_name || "");
+  };
 
   const handleSaveRename = async (responseId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
+    e.stopPropagation();
     if (editedName.trim()) {
       await updatePlayerName.mutateAsync({
         responseId,
         playerName: editedName.trim(),
-        surveyId
-      })
+        surveyId,
+      });
     }
-    setEditingId(null)
-    setEditedName('')
-  }
+    setEditingId(null);
+    setEditedName("");
+  };
 
   const handleCancelRename = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setEditingId(null)
-    setEditedName('')
-  }
+    e.stopPropagation();
+    setEditingId(null);
+    setEditedName("");
+  };
 
   const handleDeleteClick = (responseId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDeleteConfirmId(responseId)
-  }
+    e.stopPropagation();
+    setDeleteConfirmId(responseId);
+  };
 
-  const handleConfirmDelete = async (responseId: string, e: React.MouseEvent) => {
-    e.stopPropagation()
-    await deleteResponse.mutateAsync({ responseId, surveyId })
-    setDeleteConfirmId(null)
-  }
+  const handleConfirmDelete = async (
+    responseId: string,
+    e: React.MouseEvent,
+  ) => {
+    e.stopPropagation();
+    await deleteResponse.mutateAsync({ responseId, surveyId });
+    setDeleteConfirmId(null);
+  };
 
   const handleCancelDelete = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDeleteConfirmId(null)
-  }
+    e.stopPropagation();
+    setDeleteConfirmId(null);
+  };
 
   if (responses.length === 0) {
     return (
       <div className="text-center py-12 bg-dark-surface rounded-lg border border-dark-elevated">
         <div className="text-6xl mb-4">📭</div>
         <h3 className="text-xl font-semibold text-white mb-2">
-          {t('results.noResponses')}
+          {t("results.noResponses")}
         </h3>
-        <p className="text-gray-400">{t('results.noResponsesMessage')}</p>
+        <p className="text-gray-400">{t("results.noResponsesMessage")}</p>
       </div>
-    )
+    );
   }
 
   return (
     <div className="space-y-4">
       {responses.map((response) => {
-        const isExpanded = expandedId === response.id
-        const isEditing = editingId === response.id
-        const isDeleting = deleteConfirmId === response.id
-        const answers = response.answers as SurveyAnswers
+        const isExpanded = expandedId === response.id;
+        const isEditing = editingId === response.id;
+        const isDeleting = deleteConfirmId === response.id;
+        const answers = response.answers as SurveyAnswers;
 
         return (
           <div
@@ -144,7 +162,10 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                 <div className="text-2xl">👤</div>
                 <div className="text-left flex-1">
                   {isEditing ? (
-                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className="flex items-center gap-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <input
                         type="text"
                         value={editedName}
@@ -156,27 +177,30 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                         onClick={(e) => handleSaveRename(response.id, e)}
                         className="px-3 py-1 bg-cyber-500 hover:bg-cyber-600 text-white text-sm rounded transition-colors"
                       >
-                        {t('common.save')}
+                        {t("common.save")}
                       </button>
                       <button
                         onClick={handleCancelRename}
                         className="px-3 py-1 bg-dark-elevated hover:bg-dark-bg text-white text-sm rounded transition-colors"
                       >
-                        {t('common.cancel')}
+                        {t("common.cancel")}
                       </button>
                     </div>
                   ) : (
                     <>
                       <div className="font-semibold text-white">
-                        {response.player_name || t('results.responses.anonymousPlayer')}
+                        {response.player_name ||
+                          t("results.responses.anonymousPlayer")}
                       </div>
                       <div className="text-sm text-gray-400 mb-1">
-                        {new Date(response.submitted_at).toLocaleString()} •{' '}
+                        {new Date(response.submitted_at).toLocaleString()} •{" "}
                         {response.language.toUpperCase()}
                       </div>
                       {answers.language_proficiency && (
                         <div className="mt-1">
-                          {formatLanguageProficiency(answers.language_proficiency)}
+                          {formatLanguageProficiency(
+                            answers.language_proficiency,
+                          )}
                         </div>
                       )}
                     </>
@@ -185,8 +209,11 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                {!isEditing && !isDeleting && (
+              <div
+                className="flex items-center gap-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {isOwner && !isEditing && !isDeleting && (
                   <>
                     <button
                       onClick={(e) => handleStartRename(response, e)}
@@ -231,25 +258,27 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
 
                 {isDeleting && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-red-400 mr-2">{t('results.responses.deleteConfirm')}</span>
+                    <span className="text-sm text-red-400 mr-2">
+                      {t("results.responses.deleteConfirm")}
+                    </span>
                     <button
                       onClick={(e) => handleConfirmDelete(response.id, e)}
                       className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded transition-colors"
                     >
-                      {t('common.yes')}
+                      {t("common.yes")}
                     </button>
                     <button
                       onClick={handleCancelDelete}
                       className="px-3 py-1 bg-dark-elevated hover:bg-dark-bg text-white text-sm rounded transition-colors"
                     >
-                      {t('common.no')}
+                      {t("common.no")}
                     </button>
                   </div>
                 )}
 
                 <svg
                   className={`w-5 h-5 text-gray-400 transition-transform ${
-                    isExpanded ? 'rotate-180' : ''
+                    isExpanded ? "rotate-180" : ""
                   }`}
                   fill="none"
                   viewBox="0 0 24 24"
@@ -273,18 +302,20 @@ export const ResponseList: React.FC<ResponseListProps> = ({ responses, surveyId 
                     <div className="text-sm font-medium text-gray-400">
                       {formatQuestionKey(key)}
                     </div>
-                    {key === 'language_proficiency' ? (
+                    {key === "language_proficiency" ? (
                       formatLanguageProficiency(value as Record<string, number>)
                     ) : (
-                      <div className="text-white">{formatAnswer(key, value)}</div>
+                      <div className="text-white">
+                        {formatAnswer(key, value)}
+                      </div>
                     )}
                   </div>
                 ))}
               </div>
             )}
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};

@@ -1,13 +1,14 @@
-import { HashRouter as Router, Routes, Route } from 'react-router-dom'
-import { Landing } from './pages/Landing'
-import { Signup } from './pages/Signup'
-import { Login } from './pages/Login'
-import { GMDashboard } from './pages/GMDashboard'
-import { SurveyCreation } from './pages/SurveyCreation'
-import { SurveyCompletion } from './pages/SurveyCompletion'
-import { PlayerResults } from './pages/PlayerResults'
-import { ResultsDashboard } from './pages/ResultsDashboard'
-import { ProtectedRoute } from './components/common/ProtectedRoute'
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { Landing } from "./pages/Landing";
+import { Signup } from "./pages/Signup";
+import { Login } from "./pages/Login";
+import { GMDashboard } from "./pages/GMDashboard";
+import { SurveyCreation } from "./pages/SurveyCreation";
+import { SurveyCompletion } from "./pages/SurveyCompletion";
+import { PlayerResults } from "./pages/PlayerResults";
+import { ResultsDashboard } from "./pages/ResultsDashboard";
+import { AcceptInvitation } from "./pages/AcceptInvitation";
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
 
 function App() {
   return (
@@ -17,8 +18,12 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/invite/:token" element={<AcceptInvitation />} />
         <Route path="/surveys/:shareToken" element={<SurveyCompletion />} />
-        <Route path="/surveys/:shareToken/results" element={<PlayerResults />} />
+        <Route
+          path="/surveys/:shareToken/results"
+          element={<PlayerResults />}
+        />
 
         {/* Protected Routes (GM only) */}
         <Route
@@ -47,7 +52,7 @@ function App() {
         />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
