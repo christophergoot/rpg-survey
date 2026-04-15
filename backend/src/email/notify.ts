@@ -34,7 +34,7 @@ export async function notifyGM(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "RPG Survey <onboarding@resend.dev>",
+      from: "RPG Survey <noreply@contact.christophergoot.com>",
       to: gmEmail,
       subject: `New survey response: ${surveyTitle}`,
       html: `
