@@ -16,7 +16,8 @@
     "confirm": "Confirmer",
     "yes": "Oui",
     "no": "Non",
-    "na": "N/D"
+    "na": "N/D",
+    "optional": "facultatif"
   },
   "landing": {
     "title": "Createur de Sondages JDR",
@@ -27,7 +28,8 @@
     "forGMs": "Pour les Maitres du Jeu",
     "forPlayers": "Pour les Joueurs",
     "gmDescription": "Creez des sondages, partagez avec les joueurs et consultez les reponses",
-    "playerDescription": "Completez des sondages pour aider votre MJ a planifier la campagne parfaite"
+    "playerDescription": "Completez des sondages pour aider votre MJ a planifier la campagne parfaite",
+    "playerNoAccount": "Pas de compte necessaire — utilisez simplement le lien que votre MJ a partage avec vous."
   },
   "auth": {
     "signUp": "S'inscrire",
@@ -50,7 +52,10 @@
     "emailRequired": "L'email est requis",
     "passwordRequired": "Le mot de passe est requis",
     "passwordMinLength": "Le mot de passe doit contenir au moins 6 caracteres",
-    "welcome": "Bienvenue sur le Createur de Sondages JDR"
+    "welcome": "Bienvenue sur le Createur de Sondages JDR",
+    "gmSignupTitle": "Creez votre compte Maitre du Jeu",
+    "gmSignupSubtitle": "Creez des sondages et comprenez vos joueurs",
+    "forgotPasswordMessage": "La reinitialisation du mot de passe arrive bientot. Contactez le support si vous etes bloque."
   },
   "dashboard": {
     "title": "Mes Sondages",

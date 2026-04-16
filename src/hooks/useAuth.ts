@@ -15,15 +15,36 @@ export interface AuthState {
   error: Error | null;
 }
 
+// Parse the JWT payload synchronously so we can render immediately without
+// waiting for a network round-trip to /auth/me on every page load.
+const parseTokenUser = (token: string): User | null => {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload.sub || !payload.email) return null;
+    return {
+      id: payload.sub,
+      email: payload.email,
+      display_name: payload.display_name ?? payload.email.split("@")[0],
+    };
+  } catch {
+    return null;
+  }
+};
+
+const getInitialAuthState = (): AuthState => {
+  const token = getToken();
+  if (!token) return { user: null, loading: false, error: null };
+  const user = parseTokenUser(token);
+  // Render optimistically from token payload; background verify will
+  // confirm or clear if the token has been revoked/expired server-side.
+  return { user, loading: false, error: null };
+};
+
 export const useAuth = () => {
-  const [authState, setAuthState] = useState<AuthState>({
-    user: null,
-    loading: true,
-    error: null,
-  });
+  const [authState, setAuthState] = useState<AuthState>(getInitialAuthState);
 
   useEffect(() => {
-    const loadUser = async () => {
+    const verifyUser = async () => {
       const token = getToken();
       if (!token) {
         setAuthState({ user: null, loading: false, error: null });
@@ -38,8 +59,8 @@ export const useAuth = () => {
       }
     };
 
-    loadUser();
-    return onAuthChange(loadUser);
+    verifyUser();
+    return onAuthChange(verifyUser);
   }, []);
 
   const signUp = async (

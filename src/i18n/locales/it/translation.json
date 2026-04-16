@@ -16,7 +16,8 @@
     "confirm": "Conferma",
     "yes": "Si",
     "no": "No",
-    "na": "N/D"
+    "na": "N/D",
+    "optional": "facoltativo"
   },
   "landing": {
     "title": "Creatore Sondaggi GDR",
@@ -27,7 +28,8 @@
     "forGMs": "Per i Game Master",
     "forPlayers": "Per i Giocatori",
     "gmDescription": "Crea sondaggi, condividi con i giocatori e visualizza le risposte",
-    "playerDescription": "Completa i sondaggi per aiutare il tuo GM a pianificare la campagna perfetta"
+    "playerDescription": "Completa i sondaggi per aiutare il tuo GM a pianificare la campagna perfetta",
+    "playerNoAccount": "Nessun account necessario — usa semplicemente il link che il tuo GM ha condiviso con te."
   },
   "auth": {
     "signUp": "Registrati",
@@ -50,7 +52,10 @@
     "emailRequired": "L'email e obbligatoria",
     "passwordRequired": "La password e obbligatoria",
     "passwordMinLength": "La password deve avere almeno 6 caratteri",
-    "welcome": "Benvenuto nel Creatore Sondaggi GDR"
+    "welcome": "Benvenuto nel Creatore Sondaggi GDR",
+    "gmSignupTitle": "Crea il tuo account Game Master",
+    "gmSignupSubtitle": "Crea sondaggi e comprendi i tuoi giocatori",
+    "forgotPasswordMessage": "Il ripristino della password arriva presto. Contatta il supporto se sei bloccato."
   },
   "dashboard": {
     "title": "I Miei Sondaggi",

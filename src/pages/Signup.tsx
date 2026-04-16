@@ -45,7 +45,7 @@ export const Signup: React.FC = () => {
     if (error) {
       setError(error.message || t("auth.signUpError"));
     } else {
-      navigate(returnTo ?? "/dashboard");
+      navigate(returnTo ?? "/create");
     }
   };
 
@@ -66,9 +66,9 @@ export const Signup: React.FC = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-white mb-2">
-                {t("auth.createAccount")}
+                {t("auth.gmSignupTitle")}
               </h1>
-              <p className="text-gray-400">{t("auth.welcome")}</p>
+              <p className="text-gray-400">{t("auth.gmSignupSubtitle")}</p>
             </div>
 
             {/* Error Message */}
@@ -80,24 +80,6 @@ export const Signup: React.FC = () => {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="displayName"
-                  className="block text-sm font-medium text-gray-300 mb-2"
-                >
-                  {t("auth.displayName")}
-                </label>
-                <input
-                  type="text"
-                  id="displayName"
-                  name="displayName"
-                  value={formData.displayName}
-                  onChange={handleChange}
-                  placeholder={t("auth.displayNamePlaceholder")}
-                  className="w-full px-4 py-3 bg-dark-bg border border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
-                />
-              </div>
-
               <div>
                 <label
                   htmlFor="email"
@@ -113,6 +95,7 @@ export const Signup: React.FC = () => {
                   onChange={handleChange}
                   placeholder={t("auth.emailPlaceholder")}
                   required
+                  autoComplete="email"
                   className="w-full px-4 py-3 bg-dark-bg border border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
                 />
               </div>
@@ -132,6 +115,7 @@ export const Signup: React.FC = () => {
                   onChange={handleChange}
                   placeholder={t("auth.passwordPlaceholder")}
                   required
+                  autoComplete="new-password"
                   className="w-full px-4 py-3 bg-dark-bg border border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
                 />
                 <p className="mt-2 text-sm text-gray-500">
@@ -139,11 +123,36 @@ export const Signup: React.FC = () => {
                 </p>
               </div>
 
+              <div>
+                <label
+                  htmlFor="displayName"
+                  className="block text-sm font-medium text-gray-300 mb-2"
+                >
+                  {t("auth.displayName")}{" "}
+                  <span className="text-gray-500 font-normal">
+                    ({t("common.optional", "optional")})
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  id="displayName"
+                  name="displayName"
+                  value={formData.displayName}
+                  onChange={handleChange}
+                  placeholder={t("auth.displayNamePlaceholder")}
+                  autoComplete="nickname"
+                  className="w-full px-4 py-3 bg-dark-bg border border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
+                />
+              </div>
+
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-cyber-500 hover:bg-cyber-600 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+                className="w-full px-6 py-3 bg-cyber-500 hover:bg-cyber-600 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
               >
+                {loading && (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                )}
                 {loading ? t("auth.signingUp") : t("auth.signUp")}
               </button>
             </form>

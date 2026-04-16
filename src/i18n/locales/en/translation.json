@@ -16,7 +16,8 @@
     "confirm": "Confirm",
     "yes": "Yes",
     "no": "No",
-    "na": "N/A"
+    "na": "N/A",
+    "optional": "optional"
   },
   "landing": {
     "title": "RPG Survey Creator",
@@ -27,7 +28,8 @@
     "forGMs": "For Game Masters",
     "forPlayers": "For Players",
     "gmDescription": "Create surveys, share with players, and view responses",
-    "playerDescription": "Complete surveys to help your GM plan the perfect campaign"
+    "playerDescription": "Complete surveys to help your GM plan the perfect campaign",
+    "playerNoAccount": "No account needed — just use the link your GM shared with you."
   },
   "auth": {
     "signUp": "Sign Up",
@@ -50,7 +52,10 @@
     "emailRequired": "Email is required",
     "passwordRequired": "Password is required",
     "passwordMinLength": "Password must be at least 6 characters",
-    "welcome": "Welcome to RPG Survey Creator"
+    "welcome": "Welcome to RPG Survey Creator",
+    "gmSignupTitle": "Create Your GM Account",
+    "gmSignupSubtitle": "Build surveys and understand your players",
+    "forgotPasswordMessage": "Password reset is coming soon. Contact support if you're locked out."
   },
   "dashboard": {
     "title": "My Surveys",

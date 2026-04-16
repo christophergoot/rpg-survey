@@ -16,7 +16,8 @@
     "confirm": "Confirmar",
     "yes": "Sim",
     "no": "Nao",
-    "na": "N/D"
+    "na": "N/D",
+    "optional": "opcional"
   },
   "landing": {
     "title": "Criador de Pesquisas de RPG",
@@ -27,7 +28,8 @@
     "forGMs": "Para Mestres do Jogo",
     "forPlayers": "Para Jogadores",
     "gmDescription": "Crie pesquisas, compartilhe com jogadores e visualize respostas",
-    "playerDescription": "Complete pesquisas para ajudar seu Mestre a planejar a campanha perfeita"
+    "playerDescription": "Complete pesquisas para ajudar seu Mestre a planejar a campanha perfeita",
+    "playerNoAccount": "Nenhuma conta necessaria — use o link que seu Mestre compartilhou com voce."
   },
   "auth": {
     "signUp": "Cadastrar",
@@ -50,7 +52,10 @@
     "emailRequired": "Email e obrigatorio",
     "passwordRequired": "Senha e obrigatoria",
     "passwordMinLength": "A senha deve ter pelo menos 6 caracteres",
-    "welcome": "Bem-vindo ao Criador de Pesquisas de RPG"
+    "welcome": "Bem-vindo ao Criador de Pesquisas de RPG",
+    "gmSignupTitle": "Crie sua conta de Mestre do Jogo",
+    "gmSignupSubtitle": "Crie pesquisas e entenda seus jogadores",
+    "forgotPasswordMessage": "A recuperacao de senha estara disponivel em breve. Entre em contato com o suporte se estiver bloqueado."
   },
   "dashboard": {
     "title": "Minhas Pesquisas",

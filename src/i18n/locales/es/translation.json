@@ -16,7 +16,8 @@
     "confirm": "Confirmar",
     "yes": "Sí",
     "no": "No",
-    "na": "N/D"
+    "na": "N/D",
+    "optional": "opcional"
   },
   "landing": {
     "title": "Creador de Encuestas de Rol",
@@ -27,7 +28,8 @@
     "forGMs": "Para Directores de Juego",
     "forPlayers": "Para Jugadores",
     "gmDescription": "Crea encuestas, compártelas con jugadores y ve las respuestas",
-    "playerDescription": "Completa encuestas para ayudar a tu DJ a planear la campaña perfecta"
+    "playerDescription": "Completa encuestas para ayudar a tu DJ a planear la campaña perfecta",
+    "playerNoAccount": "No necesitas cuenta — solo usa el enlace que tu Director de Juego compartio contigo."
   },
   "auth": {
     "signUp": "Registrarse",
@@ -50,7 +52,10 @@
     "emailRequired": "El correo electrónico es obligatorio",
     "passwordRequired": "La contraseña es obligatoria",
     "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
-    "welcome": "Bienvenido al Creador de Encuestas de Rol"
+    "welcome": "Bienvenido al Creador de Encuestas de Rol",
+    "gmSignupTitle": "Crea tu Cuenta de Director de Juego",
+    "gmSignupSubtitle": "Crea encuestas y comprende a tus jugadores",
+    "forgotPasswordMessage": "La recuperacion de contrasena estara disponible pronto. Contacta soporte si no puedes acceder."
   },
   "dashboard": {
     "title": "Mis Encuestas",

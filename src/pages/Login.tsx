@@ -16,6 +16,7 @@ export const Login: React.FC = () => {
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [showForgotMessage, setShowForgotMessage] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,13 +110,30 @@ export const Login: React.FC = () => {
                   autoComplete="current-password"
                   className="w-full px-4 py-3 bg-dark-bg border border-dark-elevated rounded-lg focus:outline-none focus:border-cyber-500 text-white placeholder-gray-500"
                 />
+                <div className="mt-2 text-right">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotMessage((v) => !v)}
+                    className="text-sm text-gray-500 hover:text-gray-400 transition-colors"
+                  >
+                    {t("auth.forgotPassword")}
+                  </button>
+                </div>
+                {showForgotMessage && (
+                  <p className="mt-2 text-sm text-gray-400 bg-dark-bg rounded-lg px-4 py-3">
+                    {t("auth.forgotPasswordMessage")}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full px-6 py-3 bg-cyber-500 hover:bg-cyber-600 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors"
+                className="w-full px-6 py-3 bg-cyber-500 hover:bg-cyber-600 disabled:bg-gray-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
               >
+                {loading && (
+                  <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                )}
                 {loading ? t("auth.signingIn") : t("auth.signIn")}
               </button>
             </form>

@@ -16,7 +16,8 @@
     "confirm": "Bevestigen",
     "yes": "Ja",
     "no": "Nee",
-    "na": "N.v.t."
+    "na": "N.v.t.",
+    "optional": "optioneel"
   },
   "landing": {
     "title": "RPG Enquete Maker",
@@ -27,7 +28,8 @@
     "forGMs": "Voor Game Masters",
     "forPlayers": "Voor Spelers",
     "gmDescription": "Maak enquetes, deel met spelers en bekijk antwoorden",
-    "playerDescription": "Vul enquetes in om je GM te helpen de perfecte campagne te plannen"
+    "playerDescription": "Vul enquetes in om je GM te helpen de perfecte campagne te plannen",
+    "playerNoAccount": "Geen account nodig — gebruik gewoon de link die je GM met je heeft gedeeld."
   },
   "auth": {
     "signUp": "Registreren",
@@ -50,7 +52,10 @@
     "emailRequired": "E-mail is verplicht",
     "passwordRequired": "Wachtwoord is verplicht",
     "passwordMinLength": "Wachtwoord moet minimaal 6 tekens bevatten",
-    "welcome": "Welkom bij RPG Enquete Maker"
+    "welcome": "Welkom bij RPG Enquete Maker",
+    "gmSignupTitle": "Maak je Game Master-account",
+    "gmSignupSubtitle": "Maak enquetes en begrijp je spelers",
+    "forgotPasswordMessage": "Wachtwoord opnieuw instellen komt binnenkort. Neem contact op met support als je bent buitengesloten."
   },
   "dashboard": {
     "title": "Mijn Enquetes",

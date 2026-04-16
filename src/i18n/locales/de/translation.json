@@ -16,7 +16,8 @@
     "confirm": "Bestatigen",
     "yes": "Ja",
     "no": "Nein",
-    "na": "K.A."
+    "na": "K.A.",
+    "optional": "optional"
   },
   "landing": {
     "title": "RPG-Umfrage-Ersteller",
@@ -27,7 +28,8 @@
     "forGMs": "Fur Spielleiter",
     "forPlayers": "Fur Spieler",
     "gmDescription": "Erstellen Sie Umfragen, teilen Sie sie mit Spielern und sehen Sie die Antworten",
-    "playerDescription": "Fullen Sie Umfragen aus, um Ihrem SL bei der Planung der perfekten Kampagne zu helfen"
+    "playerDescription": "Fullen Sie Umfragen aus, um Ihrem SL bei der Planung der perfekten Kampagne zu helfen",
+    "playerNoAccount": "Kein Konto erforderlich — nutzen Sie einfach den Link, den Ihr Spielleiter mit Ihnen geteilt hat."
   },
   "auth": {
     "signUp": "Registrieren",
@@ -50,7 +52,10 @@
     "emailRequired": "E-Mail ist erforderlich",
     "passwordRequired": "Passwort ist erforderlich",
     "passwordMinLength": "Das Passwort muss mindestens 6 Zeichen haben",
-    "welcome": "Willkommen beim RPG-Umfrage-Ersteller"
+    "welcome": "Willkommen beim RPG-Umfrage-Ersteller",
+    "gmSignupTitle": "Erstellen Sie Ihr Spielleiter-Konto",
+    "gmSignupSubtitle": "Erstellen Sie Umfragen und verstehen Sie Ihre Spieler",
+    "forgotPasswordMessage": "Passwortzurucksetzung kommt bald. Kontaktieren Sie den Support, wenn Sie gesperrt sind."
   },
   "dashboard": {
     "title": "Meine Umfragen",
