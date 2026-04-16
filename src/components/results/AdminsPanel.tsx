@@ -70,9 +70,18 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
     }
   };
 
-  const handleCopyLink = async (token: string) => {
-    const url = `${window.location.origin}/#/invite/${token}`;
-    await navigator.clipboard.writeText(url);
+  const getInviteUrl = (token: string) =>
+    `${window.location.origin}${import.meta.env.BASE_URL}#/invite/${token}`;
+
+  const handleCopyMessage = async (inv: SurveyInvitation) => {
+    const url = getInviteUrl(inv.token);
+    const expiry = new Date(inv.expires_at).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+    const message = `You've been invited to co-administer a survey on RPG Survey.\n\nClick the link below to accept. You'll need to sign in or create an account if you don't have one.\n\n${url}\n\nThis invitation expires on ${expiry}.`;
+    await navigator.clipboard.writeText(message);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -223,11 +232,11 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
               Invitation Instructions
             </h3>
             <p className="text-sm text-gray-400">
-              Share the following with{" "}
+              Share this message with{" "}
               <span className="text-gray-200">
                 {modalInvitation.invited_email}
-              </span>{" "}
-              so they can accept without needing the email.
+              </span>
+              .
             </p>
             <div className="bg-dark-bg rounded-lg p-4 space-y-3 text-sm text-gray-300">
               <p>
@@ -237,19 +246,23 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
                 Click the link below to accept. You'll need to sign in or create
                 an account if you don't have one.
               </p>
+              <p className="break-all text-cyber-400">
+                {getInviteUrl(modalInvitation.token)}
+              </p>
               <p className="text-xs text-gray-500">
-                Expires{" "}
+                This invitation expires on{" "}
                 {new Date(modalInvitation.expires_at).toLocaleDateString(
                   "en-US",
                   { month: "long", day: "numeric", year: "numeric" },
                 )}
+                .
               </p>
             </div>
             <button
-              onClick={() => handleCopyLink(modalInvitation.token)}
+              onClick={() => handleCopyMessage(modalInvitation)}
               className="w-full px-4 py-2.5 bg-cyber-500 hover:bg-cyber-600 text-white font-semibold rounded-lg transition-colors"
             >
-              {copied ? "Copied!" : "Copy Invite Link"}
+              {copied ? "Copied!" : "Copy Message"}
             </button>
             <button
               onClick={() => setModalInvitation(null)}
