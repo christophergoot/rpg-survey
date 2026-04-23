@@ -216,14 +216,7 @@ router.post("/:surveyId/admins/invitations/:token/accept", async (req, res) => {
       res.status(410).json({ error: "This invitation has expired" });
       return;
     }
-    if (inv.accepted_at !== null) {
-      res
-        .status(409)
-        .json({ error: "This invitation has already been accepted" });
-      return;
-    }
 
-    // Verify the logged-in user's email matches the invited email
     const userResult = await pool.query(
       "SELECT email FROM gm_profiles WHERE id = $1",
       [req.userId],
@@ -237,6 +230,22 @@ router.post("/:surveyId/admins/invitations/:token/accept", async (req, res) => {
       res.status(403).json({
         error: `This invitation was sent to ${inv.invited_email}. Please sign in with that account.`,
       });
+      return;
+    }
+
+    if (inv.accepted_at !== null) {
+      const adminCheck = await pool.query(
+        "SELECT 1 FROM survey_admins WHERE survey_id = $1 AND user_id = $2",
+        [surveyId, req.userId],
+      );
+      if (adminCheck.rows.length === 0) {
+        res.status(403).json({
+          error:
+            "You no longer have co-admin access to this survey. Ask the owner to invite you again.",
+        });
+        return;
+      }
+      res.json({ survey_id: surveyId, survey_title: inv.survey_title });
       return;
     }
 
