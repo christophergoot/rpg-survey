@@ -71,7 +71,7 @@ export const AdminsPanel: React.FC<AdminsPanelProps> = ({ surveyId }) => {
   };
 
   const getInviteUrl = (token: string) =>
-    `${window.location.origin}${import.meta.env.BASE_URL}#/invite/${token}`;
+    new URL(`#/invite/${token}`, window.location.href).href;
 
   const handleCopyMessage = async (inv: SurveyInvitation) => {
     const url = getInviteUrl(inv.token);
